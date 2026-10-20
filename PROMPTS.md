@@ -542,3 +542,24 @@ Kriteria selesai:
 
 **Perbaikan:**
 Memberikan fleksibilitas bagi admin: admin dapat mengunggah file foto baru dari komputer ATAU tetap dapat memasukkan tautan link foto secara manual jika diperlukan.
+
+## US-30 Dashboard ringkasan admin
+
+**Prompt:**
+Sebagai admin, saya ingin melihat ringkasan toko, supaya saya tahu kondisi katalog sekilas.
+Bernilai 10 poin.
+Kriteria selesai:
+- `/admin` menampilkan jumlah produk dari database. (4 poin)
+- Menampilkan jumlah produk per kategori. (3 poin)
+- Hanya bisa dibuka setelah login. (3 poin)
+
+**Hasil:**
+- Mengembangkan tampilan ringkasan toko pada `app/admin/page.jsx` dengan kartu metrik:
+  - Total Produk terdaftar dari database.
+  - Total Kategori aktif.
+  - Rincian jumlah produk untuk masing-masing kategori menggunakan badge interaktif.
+- Data dihitung dinamis dari query tabel `produk` di Supabase.
+- Seluruh rute `/admin` tetap terlindungi melalui `proxy.js` dan verifikasi sesi auth admin di server, sehingga hanya admin yang sudah login yang dapat mengaksesnya.
+
+**Perbaikan:**
+Menampilkan badge hitungan kategori dengan warna token tema yang adaptif untuk mode terang dan mode gelap agar dashboard tetap bersih dan nyaman dilihat.

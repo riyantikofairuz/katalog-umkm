@@ -505,3 +505,20 @@ Kriteria selesai:
 
 **Perbaikan:**
 Menambahkan fallback penanganan error pada query Supabase di dalam sitemap generator agar tetap menghasilkan sitemap rute statis jika koneksi database sempat mengalami kendala.
+
+## US-28 Halaman 404 dan loading kustom
+
+**Prompt:**
+Sebagai pengunjung, saya ingin pesan yang ramah saat halaman tidak ada atau sedang dimuat.
+Bernilai 5 poin.
+Kriteria selesai:
+- Ada `not-found.jsx` kustom dengan tautan kembali ke beranda. (3 poin)
+- Ada `loading.jsx` atau skeleton di halaman yang mengambil data. (2 poin)
+
+**Hasil:**
+- Mengembangkan halaman `app/not-found.jsx` dengan antarmuka yang ramah dan menarik (badge 404 beraksen, pesan penjelasan informatif, dan tombol navigasi kembali ke katalog beranda maupun kontak tentang toko).
+- Membuat komponen loading skeleton di `app/loading.jsx` untuk menampilkan placeholder animasi berkedip halus saat katalog utama mengambil data produk dan kategori.
+- Membuat komponen loading skeleton di `app/produk/[id]/loading.jsx` untuk menampilkan placeholder layout foto produk, spesifikasi harga, serta tombol pesan selagi data produk sedang disiapkan.
+
+**Perbaikan:**
+Menyematkan animasi pulse (`animate-pulse`) dengan warna kontras yang serasi pada token CSS tema terang maupun mode gelap agar tampilan transisi muat data terasa nyaman di mata.

@@ -357,3 +357,18 @@ Kriteria selesai:
 
 **Perbaikan:**
 Memastikan subtotal dan total harga belanja dihitung otomatis dengan harga diskon jika produk sedang promo.
+
+## US-22 Halaman Tentang dan kontak toko
+**[Prompt:Sebagai pengunjung, saya ingin tahu siapa pemilik toko dan cara menghubunginya, supaya saya percaya pada toko ini.
+Bernilai 5 poin.
+Kriteria selesai:
+- Ada halaman (misalnya `/tentang`) berisi profil toko, alamat, jam buka, dan kontak. (3 poin)
+- Halaman tertaut dari navigasi atau footer. (2 poin)]**
+
+**Hasil:**
+- Membuat halaman baru `app/tentang/page.jsx` yang memuat profil usaha, tagline, alamat toko, jam operasional, serta tombol langsung untuk chat via WhatsApp resmi toko.
+- Data toko terintegrasi langsung dari `lib/toko.js`.
+- Menautkan halaman `/tentang` pada komponen `Footer.jsx` agar dapat diakses dari seluruh halaman katalog.
+
+**Perbaikan:**
+Menyediakan tombol "Kembali ke Katalog" di bagian atas halaman `/tentang` untuk memudahkan alur navigasi pengunjung kembali berbelanja.

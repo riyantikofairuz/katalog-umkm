@@ -258,3 +258,20 @@ Kriteria selesai:
 
 **Perbaikan:**
 Menyatukan perubahan urutan dengan pencarian dan filter kategori agar semua parameter pencarian saling bersinergi secara mulus.
+
+## US-16 Paginasi atau muat lebih banyak
+**[Prompt:Sebagai pengunjung, saya ingin daftar produk tidak terlalu panjang, supaya halaman cepat dibuka.
+Bernilai 10 poin.
+Kriteria selesai:
+- Daftar produk dipecah per halaman atau ada tombol "muat lebih banyak". (4 poin)
+- Pembatasan jumlah dilakukan di query database, bukan hanya disembunyikan. (3 poin)
+- Navigasi antar halaman berfungsi dan jumlah halaman benar. (3 poin)]**
+
+**Hasil:**
+- Menerapkan pembatasan data produk per halaman (6 produk/halaman) menggunakan fungsi `.range(dari, sampai)` dan opsi `{ count: "exact" }` langsung di query Supabase pada `app/page.jsx`.
+- Membuat komponen `Paginasi.jsx` yang menampilkan nomor halaman, tombol Sebelumnya, dan Berikutnya.
+- Navigasi halaman mempertahankan parameter pencarian (`q`), filter kategori (`kategori`), dan urutan (`urutan`).
+- Menghitung total data dan total halaman secara akurat dari database.
+
+**Perbaikan:**
+Memberikan indikator visual disabled pada tombol Sebelumnya dan Berikutnya bila pengguna sudah berada di halaman pertama atau terakhir.

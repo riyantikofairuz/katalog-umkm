@@ -1,14 +1,21 @@
 import KartuProduk from "@/components/KartuProduk";
 import FilterCariProduk from "@/components/FilterCariProduk";
+import Paginasi from "@/components/Paginasi";
 import { toko } from "@/lib/toko";
 import { buatKlienServer } from "@/lib/supabase";
 
 export const dynamic = "force-dynamic";
 
+const JUMLAH_PER_HALAMAN = 6;
+
 export default async function HalamanKatalog({ searchParams }) {
-  const { kategori, q, urutan = "terbaru" } = (await searchParams) || {};
+  const { kategori, q, urutan = "terbaru", halaman = "1" } = (await searchParams) || {};
+  const nomorHalaman = Math.max(1, parseInt(halaman, 10) || 1);
+
   let daftarProduk = [];
   let semuaKategori = [];
+  let totalData = 0;
+  let totalHalaman = 1;
   let pesanError = null;
 
   try {
@@ -29,8 +36,10 @@ export default async function HalamanKatalog({ searchParams }) {
       ).sort();
     }
 
-    // Query produk dengan filter kategori dan pencarian nama
-    let query = supabase.from("produk").select("*");
+    // Query produk dengan hitungan total (count) dan filter
+    let query = supabase
+      .from("produk")
+      .select("*", { count: "exact" });
 
     if (kategori && kategori.trim()) {
       query = query.eq("kategori", kategori.trim());
@@ -46,16 +55,22 @@ export default async function HalamanKatalog({ searchParams }) {
     } else if (urutan === "termahal") {
       query = query.order("harga", { ascending: false });
     } else {
-      // Default: terbaru
       query = query.order("created_at", { ascending: false });
     }
 
-    const { data, error } = await query;
+    // US-16: Paginasi diterapkan langsung pada query database menggunakan .range()
+    const dari = (nomorHalaman - 1) * JUMLAH_PER_HALAMAN;
+    const sampai = dari + JUMLAH_PER_HALAMAN - 1;
+    query = query.range(dari, sampai);
+
+    const { data, count, error } = await query;
 
     if (error) {
       pesanError = `Gagal memuat produk: ${error.message}`;
     } else {
       daftarProduk = data || [];
+      totalData = count || 0;
+      totalHalaman = Math.ceil(totalData / JUMLAH_PER_HALAMAN) || 1;
     }
   } catch (err) {
     pesanError = `Gagal memuat produk: ${err.message}`;
@@ -79,9 +94,16 @@ export default async function HalamanKatalog({ searchParams }) {
 
       <section aria-labelledby="judul-produk" className="flex flex-col gap-6">
         <div className="flex flex-col gap-4">
-          <h2 id="judul-produk" className="text-xl font-bold">
-            Produk kami
-          </h2>
+          <div className="flex items-center justify-between">
+            <h2 id="judul-produk" className="text-xl font-bold">
+              Produk kami
+            </h2>
+            {totalData > 0 && (
+              <span className="text-xs font-medium text-teks-lembut">
+                Total {totalData} produk (halaman {nomorHalaman} dari {totalHalaman})
+              </span>
+            )}
+          </div>
           <FilterCariProduk
             kategoriList={semuaKategori}
             kategoriTerpilih={kategori || ""}
@@ -103,11 +125,22 @@ export default async function HalamanKatalog({ searchParams }) {
             </p>
           </div>
         ) : (
-          <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
-            {daftarProduk.map((produk) => (
-              <KartuProduk key={produk.id} produk={produk} />
-            ))}
-          </div>
+          <>
+            <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
+              {daftarProduk.map((produk) => (
+                <KartuProduk key={produk.id} produk={produk} />
+              ))}
+            </div>
+
+            {/* Komponen Paginasi */}
+            <Paginasi
+              halamanSaatIni={nomorHalaman}
+              totalHalaman={totalHalaman}
+              kategori={kategori || ""}
+              q={q || ""}
+              urutan={urutan || ""}
+            />
+          </>
         )}
       </section>
     </>

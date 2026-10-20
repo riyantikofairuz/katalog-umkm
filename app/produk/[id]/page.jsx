@@ -7,8 +7,52 @@ import TombolBagikanProduk from "@/components/TombolBagikanProduk";
 import TombolFavorit from "@/components/TombolFavorit";
 import { formatRupiah } from "@/lib/format";
 import { buatKlienServer } from "@/lib/supabase";
+import { toko } from "@/lib/toko";
 
 export const dynamic = "force-dynamic";
+
+// US-26: generateMetadata dinamis untuk SEO dan Open Graph
+export async function generateMetadata({ params }) {
+  const { id } = await params;
+  try {
+    const supabase = buatKlienServer();
+    const { data: produk } = await supabase
+      .from("produk")
+      .select("nama, deskripsi, foto_url, kategori, harga")
+      .eq("id", id)
+      .maybeSingle();
+
+    if (!produk) {
+      return {
+        title: `Produk Tidak Ditemukan - ${toko.nama}`,
+      };
+    }
+
+    const judul = `${produk.nama} | ${toko.nama}`;
+    const deskripsi = produk.deskripsi || `${produk.nama} berkualitas tinggi di ${toko.nama}.`;
+
+    return {
+      title: judul,
+      description: deskripsi,
+      openGraph: {
+        title: produk.nama,
+        description: deskripsi,
+        images: produk.foto_url ? [{ url: produk.foto_url, alt: produk.nama }] : [],
+        type: "website",
+      },
+      twitter: {
+        card: "summary_large_image",
+        title: produk.nama,
+        description: deskripsi,
+        images: produk.foto_url ? [produk.foto_url] : [],
+      },
+    };
+  } catch {
+    return {
+      title: toko.nama,
+    };
+  }
+}
 
 export default async function HalamanDetailProduk({ params }) {
   const { id } = await params;

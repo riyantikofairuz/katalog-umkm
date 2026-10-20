@@ -469,3 +469,21 @@ Kriteria selesai:
 
 **Perbaikan:**
 Menambahkan transisi CSS halus pada pergantian warna latar dan teks saat pengguna berpindah mode terang/gelap.
+
+## US-26 Metadata SEO dan Open Graph
+
+**Prompt:**
+Sebagai pemilik toko, saya ingin link produk tampil rapi saat dibagikan, supaya menarik pembeli.
+Bernilai 5 poin.
+Kriteria selesai:
+- Halaman detail memakai `generateMetadata` untuk judul dan deskripsi yang sesuai produk. (3 poin)
+- Open Graph memuat nama dan foto produk. (2 poin)
+
+**Hasil:**
+- Mengimplementasikan fungsi `generateMetadata({ params })` di `app/produk/[id]/page.jsx` secara asinkron (mendukung format `await params` pada Next.js 16).
+- Mengambil informasi produk dari Supabase (`nama`, `deskripsi`, `foto_url`, `kategori`, `harga`) untuk menyusun tag metadata dinamis: `title` dan `description`.
+- Menambahkan konfigurasi `openGraph` yang mencakup judul produk, deskripsi produk, jenis konten website, dan daftar foto (`images`) produk.
+- Menambahkan konfigurasi `twitter` card (`summary_large_image`) dengan gambar dan ringkasan produk untuk preview optimal saat link produk dibagikan di media sosial.
+
+**Perbaikan:**
+Menambahkan penanganan `try...catch` serta pengecekan fallback jika produk tidak ditemukan di database agar metadata tetap memiliki title fallback yang aman.

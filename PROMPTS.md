@@ -275,3 +275,36 @@ Kriteria selesai:
 
 **Perbaikan:**
 Memberikan indikator visual disabled pada tombol Sebelumnya dan Berikutnya bila pengguna sudah berada di halaman pertama atau terakhir.
+
+## US-17 Produk terkait di halaman detail
+**[Prompt:Sebagai pengunjung, saya ingin melihat produk lain yang mirip, supaya saya punya pilihan lain.
+Bernilai 5 poin.
+Kriteria selesai:
+- Halaman detail menampilkan beberapa produk lain dari kategori yang sama. (3 poin)
+- Produk yang sedang dibuka tidak ikut ditampilkan, dan data diambil dari database. (2 poin)]**
+
+**Hasil:**
+- Pada `app/produk/[id]/page.jsx`, menambahkan kueri ke Supabase untuk mengambil produk terkait dengan kategori yang sama (`.eq('kategori', produk.kategori)`).
+- Mengecualikan produk yang sedang aktif (`.neq('id', id)`) agar tidak muncul berulang.
+- Menampilkan produk terkait menggunakan komponen `KartuProduk` dalam grid yang rapi di bawah detail produk.
+- Menangani kondisi jika tidak ada produk terkait (bagian produk terkait tidak akan dirender).
+
+**Perbaikan:**
+Membatasi jumlah produk terkait maksimal 3 item (`.limit(3)`) agar layout halaman detail tetap proporsional dan cepat dimuat.
+
+## US-18 Galeri beberapa foto produk
+**[Prompt:Sebagai pengunjung, saya ingin melihat beberapa foto satu produk, supaya saya tahu bentuk produknya dari berbagai sisi.
+Bernilai 10 poin.
+Kriteria selesai:
+- Satu produk bisa punya lebih dari satu foto. (4 poin)
+- Halaman detail menampilkan galeri dengan foto utama dan gambar kecil. (3 poin)
+- Pengunjung bisa berganti foto, dan produk dengan satu foto tetap tampil normal. (3 poin)]**
+
+**Hasil:**
+- Membuat komponen client `GaleriFotoProduk.jsx` yang mendukung produk dengan satu foto maupun beberapa foto (multi-foto).
+- Menampilkan foto utama besar dan deretan gambar kecil (thumbnail) yang dapat diklik pengunjung untuk berganti foto secara instan.
+- Produk dengan hanya satu foto tetap tampil bersih dan normal tanpa deretan thumbnail kosong.
+- Mengintegrasikan `GaleriFotoProduk` ke dalam `app/produk/[id]/page.jsx`.
+
+**Perbaikan:**
+Menambahkan fleksibilitas parser foto sehingga mendukung format string link jamak (dipisah koma/baris baru) maupun kolom array `foto_lainnya`.

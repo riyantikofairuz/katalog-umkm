@@ -121,3 +121,21 @@ Kriteria selesai:
 
 **Perbaikan:**
 Tidak ada kendala, kueri database berjalan normal sesuai hak akses admin dan RLS.
+
+## US-08 Tambah produk
+**[Prompt:Sebagai admin, saya ingin menambah produk baru dari halaman admin.
+Bernilai 10 poin.
+Kriteria selesai:
+- Form di `/admin/produk/baru` menyimpan produk ke database. (5 poin)
+- Setelah menyimpan, halaman kembali ke `/admin`. (2 poin)
+- Aksinya terlindungi login: tanpa login ditolak oleh server. (3 poin)]**
+
+**Hasil:**
+- Membuat Server Action `tambahProduk` di `app/admin/actions.js` dengan validasi autentikasi admin di server via `buatKlienAdmin()`.
+- Menyimpan data produk (nama, harga, kategori, foto_url, deskripsi) ke tabel `produk` di Supabase.
+- Berhasil mengarahkan kembali ke `/admin` setelah produk disimpan via `redirect("/admin")`.
+- Menghapus komponen `CatatanBelumAktif` dari `app/admin/produk/baru/page.jsx`.
+- Melakukan validasi input di server (nama wajib diisi, harga angka positif) serta menampilkan pesan error jika gagal.
+
+**Perbaikan:**
+Menyesuaikan komponen `FormProduk` agar menerima props `action`, `error`, dan `isPending` secara reusable tanpa merusak komponen lain.

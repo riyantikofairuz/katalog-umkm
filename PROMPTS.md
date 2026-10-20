@@ -105,3 +105,19 @@ Memastikan pengecualian rute untuk `/admin/login` pada matcher dan logic proxy a
 ## Debugging dan fitur bonus
 
 Tambahkan bagian baru untuk setiap error yang kamu perbaiki atau fitur bonus yang kamu kerjakan.
+
+## US-07 List Produk
+**[Prompt:Sebagai admin, saya ingin produk pada page `/admin` mengambil data dari database.
+Bernilai 10 poin.
+Kriteria selesai:
+- Daftar produk di `/admin` diambil dari database, bukan data contoh. (10 poin)]**
+
+**Hasil:**
+- Halaman `app/admin/page.jsx` diubah menjadi Server Component yang mengambil daftar produk langsung dari database Supabase (`produk`).
+- Menggunakan koneksi sesi admin `buatKlienAdmin` dari `lib/supabase` dengan pengurutan `created_at` descending.
+- Menghapus ketergantungan pada `produkContoh` dari `lib/data-contoh.js`.
+- Menambahkan penanganan pesan error jika kueri gagal serta pesan "Belum ada produk" jika tabel kosong.
+- Produk ditampilkan dengan komponen `TabelProduk` yang sudah ada.
+
+**Perbaikan:**
+Tidak ada kendala, kueri database berjalan normal sesuai hak akses admin dan RLS.

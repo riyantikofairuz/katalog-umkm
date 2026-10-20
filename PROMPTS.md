@@ -174,3 +174,18 @@ Kriteria selesai:
 
 **Perbaikan:**
 Menggunakan `useTransition` pada tombol konfirmasi hapus agar memberikan feedback status ("Menghapus...") saat penghapusan sedang diproses.
+
+## US-11 Filter kategori atau pencarian
+**[Prompt:Sebagai pengunjung, saya ingin menyaring produk berdasarkan kategori atau mencari nama produk.
+Bernilai 10 poin.
+Kriteria selesai:
+- Pengunjung bisa menyaring produk per kategori atau mencari nama produk, dan hasilnya sesuai. (10 poin)]**
+
+**Hasil:**
+- Membuat komponen client `FilterCariProduk.jsx` yang menyediakan kolom pencarian teks serta deretan tombol filter kategori dinamis.
+- Parameter filter dan pencarian disimpan di URL query (`?kategori=...&q=...`) sehingga tautan dapat dibagikan dan tetap bertahan saat refresh.
+- Pada `app/page.jsx`, parameter dibaca via `searchParams` Promise (`await searchParams`), lalu disaring langsung pada query Supabase (`.ilike('nama', ...)` dan `.eq('kategori', ...)`).
+- Menampilkan pesan yang jelas jika hasil pencarian atau filter tidak ditemukan.
+
+**Perbaikan:**
+Memanfaatkan `useTransition` saat navigasi URL pencarian/kategori agar transisi filter terasa halus dan responsif.

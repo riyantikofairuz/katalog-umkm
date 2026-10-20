@@ -487,3 +487,21 @@ Kriteria selesai:
 
 **Perbaikan:**
 Menambahkan penanganan `try...catch` serta pengecekan fallback jika produk tidak ditemukan di database agar metadata tetap memiliki title fallback yang aman.
+
+## US-27 sitemap.xml dan robots.txt
+
+**Prompt:**
+Sebagai pemilik toko, saya ingin mesin pencari menemukan semua produk, supaya toko lebih mudah ditemukan.
+Bernilai 5 poin.
+Kriteria selesai:
+- `sitemap.xml` dibuat dari database dan memuat halaman produk. (3 poin)
+- `robots.txt` valid dan menunjuk ke sitemap. (2 poin)
+
+**Hasil:**
+- Membuat file `app/sitemap.js` yang memanfaatkan fitur bawaan Next.js Metadata Files untuk menghasilkan `/sitemap.xml` secara dinamis.
+- Mengambil daftar seluruh produk dari database Supabase (`id`, `created_at`) di sisi server untuk didaftarkan ke sitemap bersama rute utama (`/`, `/tentang`, `/favorit`).
+- Mengatur properti sitemap standar: `url`, `lastModified`, `changeFrequency`, dan `priority`.
+- Membuat file `app/robots.js` untuk menghasilkan rute `/robots.txt` yang valid, mengizinkan mesin pencari merayapi katalog publik, membatasi akses ke folder `/admin`, serta mengarahkan ke URL `/sitemap.xml`.
+
+**Perbaikan:**
+Menambahkan fallback penanganan error pada query Supabase di dalam sitemap generator agar tetap menghasilkan sitemap rute statis jika koneksi database sempat mengalami kendala.

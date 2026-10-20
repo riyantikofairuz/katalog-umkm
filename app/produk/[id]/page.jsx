@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import PilihanPesanWhatsApp from "@/components/PilihanPesanWhatsApp";
 import KartuProduk from "@/components/KartuProduk";
 import GaleriFotoProduk from "@/components/GaleriFotoProduk";
+import TombolBagikanProduk from "@/components/TombolBagikanProduk";
 import { formatRupiah } from "@/lib/format";
 import { buatKlienServer } from "@/lib/supabase";
 
@@ -61,9 +62,13 @@ export default async function HalamanDetailProduk({ params }) {
         />
 
         <div className="flex flex-col gap-4">
-          <Link href="/" className="text-sm text-teks-lembut underline underline-offset-4 hover:text-utama">
-            Kembali ke katalog
-          </Link>
+          <div className="flex items-center justify-between">
+            <Link href="/" className="text-sm text-teks-lembut underline underline-offset-4 hover:text-utama">
+              Kembali ke katalog
+            </Link>
+            {/* US-23: Tombol Bagikan atau Salin Link */}
+            <TombolBagikanProduk nama={produk.nama} kategori={produk.kategori} />
+          </div>
 
           <div className="flex flex-wrap items-center gap-2">
             <p className="text-sm text-teks-lembut">{produk.kategori}</p>

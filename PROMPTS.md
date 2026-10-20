@@ -308,3 +308,18 @@ Kriteria selesai:
 
 **Perbaikan:**
 Menambahkan fleksibilitas parser foto sehingga mendukung format string link jamak (dipisah koma/baris baru) maupun kolom array `foto_lainnya`.
+
+## US-19 Status stok
+**[Prompt:Sebagai pengunjung, saya ingin tahu produk yang habis, supaya saya tidak memesan produk yang tidak ada.
+Bernilai 5 poin.
+Kriteria selesai:
+- Produk punya status atau jumlah stok di database. (2 poin)
+- Produk yang habis diberi penanda "Habis" dan tombol pesan WhatsApp dinonaktifkan atau disembunyikan. (3 poin)]**
+
+**Hasil:**
+- Membaca status ketersediaan stok produk dari database (`status === 'habis'` atau `stok === 0`).
+- Pada `KartuProduk.jsx`, produk yang habis diberi penanda/badge "Habis" dan gambar dibuat sedikit pudar/grayscale untuk membedakan visual.
+- Pada `PilihanPesanWhatsApp.jsx` di halaman detail produk, tombol "Pesan via WhatsApp" dinonaktifkan dengan label "Stok Habis (Tidak Dapat Dipesan)", input jumlah di-disable, serta ditampilkan banner penanda stok habis.
+
+**Perbaikan:**
+Mendukung pengecekan stok yang fleksibel (baik dari kolom teks `status` maupun angka `stok`) agar kompatibel dengan data yang ada di database.

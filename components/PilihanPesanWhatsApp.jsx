@@ -7,6 +7,12 @@ import { formatRupiah } from "@/lib/format";
 export default function PilihanPesanWhatsApp({ produk }) {
   const [jumlah, setJumlah] = useState(1);
 
+  // US-19: Cek status ketersediaan stok
+  const isHabis =
+    produk.status === "habis" ||
+    produk.stok === 0 ||
+    produk.stok_tersedia === false;
+
   // Tentukan varian bawaan jika kategori atau produk relevan, atau opsi paket standar
   const daftarVarian = ["Reguler", "Spesial", "Hemat / Grosir"];
   const [varian, setVarian] = useState(daftarVarian[0]);
@@ -26,6 +32,19 @@ Apakah produk ini masih tersedia?`;
 
   return (
     <div className="flex flex-col gap-4 rounded-2xl border border-garis bg-permukaan/50 p-4 sm:p-5">
+      {/* Penanda Status Stok (US-19) */}
+      {isHabis ? (
+        <div className="flex items-center gap-2 rounded-xl border border-bahaya/30 bg-bahaya/10 p-3 text-sm font-semibold text-bahaya">
+          <span className="flex h-2.5 w-2.5 rounded-full bg-bahaya"></span>
+          Produk ini sedang habis
+        </div>
+      ) : (
+        <div className="flex items-center gap-2 text-xs font-semibold text-utama">
+          <span className="flex h-2 w-2 rounded-full bg-utama"></span>
+          Stok tersedia
+        </div>
+      )}
+
       {/* Pilihan Varian */}
       <div className="flex flex-col gap-1.5">
         <label className="text-xs font-semibold uppercase tracking-wider text-teks-lembut">
@@ -36,9 +55,12 @@ Apakah produk ini masih tersedia?`;
             <button
               key={item}
               type="button"
+              disabled={isHabis}
               onClick={() => setVarian(item)}
               className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition ${
-                varian === item
+                isHabis
+                  ? "opacity-50 cursor-not-allowed border border-garis bg-latar text-teks-lembut"
+                  : varian === item
                   ? "bg-utama text-white"
                   : "border border-garis bg-latar text-teks hover:border-utama"
               }`}
@@ -58,7 +80,7 @@ Apakah produk ini masih tersedia?`;
           <button
             type="button"
             onClick={() => setJumlah((prev) => Math.max(1, prev - 1))}
-            disabled={jumlah <= 1}
+            disabled={isHabis || jumlah <= 1}
             className="flex h-9 w-9 items-center justify-center font-bold text-teks hover:bg-permukaan disabled:opacity-30"
             aria-label="Kurangi jumlah"
           >
@@ -70,7 +92,8 @@ Apakah produk ini masih tersedia?`;
           <button
             type="button"
             onClick={() => setJumlah((prev) => prev + 1)}
-            className="flex h-9 w-9 items-center justify-center font-bold text-teks hover:bg-permukaan"
+            disabled={isHabis}
+            className="flex h-9 w-9 items-center justify-center font-bold text-teks hover:bg-permukaan disabled:opacity-30"
             aria-label="Tambah jumlah"
           >
             +
@@ -84,15 +107,25 @@ Apakah produk ini masih tersedia?`;
         <span className="font-bold text-harga">{formatRupiah(totalHarga)}</span>
       </div>
 
-      {/* Tombol Pesan WhatsApp */}
-      <a
-        href={urlWhatsApp}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="inline-flex w-full items-center justify-center rounded-xl bg-utama px-5 py-3.5 font-semibold text-white transition hover:bg-utama-gelap"
-      >
-        Pesan via WhatsApp
-      </a>
+      {/* US-19: Tombol Pesan WhatsApp dinonaktifkan jika stok habis */}
+      {isHabis ? (
+        <button
+          type="button"
+          disabled
+          className="inline-flex w-full cursor-not-allowed items-center justify-center rounded-xl bg-garis px-5 py-3.5 font-semibold text-teks-lembut opacity-70"
+        >
+          Stok Habis (Tidak Dapat Dipesan)
+        </button>
+      ) : (
+        <a
+          href={urlWhatsApp}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex w-full items-center justify-center rounded-xl bg-utama px-5 py-3.5 font-semibold text-white transition hover:bg-utama-gelap"
+        >
+          Pesan via WhatsApp
+        </a>
+      )}
     </div>
   );
 }

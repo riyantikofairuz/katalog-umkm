@@ -372,3 +372,19 @@ Kriteria selesai:
 
 **Perbaikan:**
 Menyediakan tombol "Kembali ke Katalog" di bagian atas halaman `/tentang` untuk memudahkan alur navigasi pengunjung kembali berbelanja.
+
+## US-23 Bagikan atau salin link produk
+**[Prompt:Sebagai pengunjung, saya ingin membagikan produk ke teman, supaya mereka bisa melihatnya.
+Bernilai 5 poin.
+Kriteria selesai:
+- Halaman detail punya tombol bagikan atau salin link (Web Share API atau clipboard). (3 poin)
+- Ada umpan balik setelah ditekan, misalnya "Link tersalin". (2 poin)]**
+
+**Hasil:**
+- Membuat komponen client `TombolBagikanProduk.jsx` yang memanfaatkan `navigator.share` (Web Share API) untuk perangkat mobile/browser yang mendukung.
+- Menyediakan fallback penyalinan otomatis ke clipboard (`navigator.clipboard.writeText`) untuk browser desktop.
+- Menampilkan umpan balik visual animasi ("✓ Link tersalin!" / "✓ Berhasil dibagikan") setelah tombol ditekan.
+- Memasang tombol bagikan di halaman detail produk `app/produk/[id]/page.jsx`.
+
+**Perbaikan:**
+Menangani kasus `AbortError` dengan tenang saat pengguna menutup dialog share bawaan browser tanpa menyalin.

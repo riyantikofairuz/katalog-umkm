@@ -29,8 +29,13 @@ Beri tombol "Kembali ke halaman utama" yang mengarah ke /.
 Pastikan halaman ini bisa diakses langsung melalui URL dan tidak crash kalau ID tidak valid.]**
 
 **Hasil:**
+- Berhasil membuat halaman dinamis `app/produk/[id]/page.jsx` menggunakan async params (`const { id } = await params`).
+- Mengambil data produk dari database Supabase di sisi server menggunakan helper `buatKlienServer`.
+- Menampilkan foto produk, kategori, nama, harga (format rupiah), deskripsi, serta tautan kembali ke katalog.
+- Menggunakan `notFound()` Next.js jika produk tidak ditemukan atau ID tidak valid.
 
 **Perbaikan:**
+Tidak ada kendala, penanganan not-found dan pengambilan data dinamis berjalan dengan baik.
 
 ## US-03 Pesan via WhatsApp
 **[Prompt:Baca AGENTS.md dan docs/user-stories.md bagian US-03.
@@ -38,8 +43,13 @@ Ubah komponen KartuProduk di app/produk/[id]/page.jsx supaya punya tombol "Pesan
 Pastikan format tombol tetap rapi dan tidak mengubah layout KartuProduk secara signifikan.]**
 
 **Hasil:**
+- Komponen `TombolWhatsApp` terpasang di halaman detail produk `app/produk/[id]/page.jsx`.
+- Menggunakan nomor WhatsApp resmi dari `lib/toko.js` yang dinormalisasi (hanya angka tanpa tanda +).
+- Pesan otomatis diformat memuat nama produk dan harga dengan `encodeURIComponent`, serta membuka link `https://wa.me/...` di tab baru (`target="_blank"`).
+- Berfungsi baik di perangkat mobile maupun desktop.
 
 **Perbaikan:**
+Tidak ada kendala, tombol pesan WhatsApp terintegrasi sesuai panduan rancangan teknis.
 
 ## US-04 Login admin
 **[Prompt:Baca AGENTS.md dan docs/user-stories.md bagian US-04.
@@ -50,8 +60,13 @@ Jangan simpan state login pakai useState. Pakai saja komponen <form> bawaan Next
 Pastikan tampilan form sederhana, rapi, dan mudah digunakan.]**
 
 **Hasil:**
+- Halaman `app/admin/login/page.jsx` dibuat dengan komponen form dan Server Action `loginAdmin` di `app/admin/actions.js`.
+- Menggunakan Supabase Auth (`supabase.auth.signInWithPassword`) yang diproses di server melalui helper `buatKlienAdmin` (`@supabase/ssr`).
+- Login berhasil mengarahkan pengguna ke `/admin`, sedangkan login gagal menampilkan pesan error yang informatif di bawah form.
+- Tombol "Keluar" (`logoutAdmin`) di `NavAdmin` mengakhiri sesi admin dan mengembalikan pengguna ke `/admin/login`.
 
 **Perbaikan:**
+Memastikan kredensial diproses sepenuhnya di server tanpa mengekspos secret key ke client.
 
 ## US-05 Ganti password
 **[Prompt:Baca AGENTS.md dan docs/user-stories.md bagian US-05.
@@ -61,8 +76,13 @@ Form harus mengirim data POST ke /api/ganti-password. Jangan pakai useState, man
 Pastikan tampilannya rapi dan mudah dipakai.]**
 
 **Hasil:**
+- Halaman `app/admin/password/page.jsx` dibuat dengan form penggantian password melalui Server Action `gantiPassword` di `app/admin/actions.js`.
+- Memvalidasi password baru minimal 8 karakter dan memeriksa kecocokan dengan konfirmasi password di sisi server.
+- Memperbarui password user yang sedang aktif menggunakan `supabase.auth.updateUser`.
+- Menampilkan pesan sukses atau pesan error secara jelas kepada admin.
 
 **Perbaikan:**
+Tidak ada kendala, validasi server dan umpan balik form berfungsi dengan tepat.
 
 ## US-06 Proteksi halaman admin
 **[Prompt:Baca AGENTS.md dan docs/user-stories.md bagian US-06. Baca juga file lib/supabase/server.js agar tahu cara membuat koneksi server yang aman. Implementasikan pemeriksaan hak akses admin:
@@ -74,8 +94,13 @@ Halaman app/admin/login/page.jsx: setelah berhasil login, redirect ke /admin.
 Halaman app/admin/ganti-password/page.jsx: sebelum menampilkan form, cek apakah user sudah login. Kalau belum, redirect ke /admin/login.]**
 
 **Hasil:**
+- Mengimplementasikan middleware/proxy di `proxy.js` (sesuai spesifikasi Next.js 16) yang memproteksi seluruh rute di bawah `/admin` (kecuali `/admin/login`).
+- Menggunakan `createServerClient` dari `@supabase/ssr` untuk memeriksa sesi autentikasi pengguna secara server-side.
+- Pengguna yang belum login otomatis dialihkan (redirect) ke `/admin/login`.
+- Seluruh aksi server yang mengubah data memverifikasi sesi login admin terlebih dahulu.
 
 **Perbaikan:**
+Memastikan pengecualian rute untuk `/admin/login` pada matcher dan logic proxy agar tidak terjadi siklus redirect (infinite redirect loop).
 
 ## Debugging dan fitur bonus
 

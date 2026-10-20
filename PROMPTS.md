@@ -338,3 +338,22 @@ Kriteria selesai:
 
 **Perbaikan:**
 Memberikan palet warna badge yang tegas dan harmonis (`bg-amber-600` untuk Terlaris, `bg-utama` untuk Baru, dan `bg-rose-600` untuk Diskon) sesuai aturan desain.
+
+## US-21 Keranjang, pesan semua via WhatsApp
+**[Prompt:Sebagai pengunjung, saya ingin memesan beberapa produk sekaligus, supaya tidak perlu mengirim pesan satu per satu.
+Bernilai 15 poin.
+Kriteria selesai:
+- Ada tombol "Tambah ke keranjang" di kartu atau halaman detail. (4 poin)
+- Keranjang bisa mengubah jumlah dan menghapus item, dan total harga benar. (4 poin)
+- Isi keranjang bertahan saat pindah halaman. (4 poin)
+- Satu tombol mengirim seluruh isi keranjang dalam satu pesan WhatsApp ke nomor di `lib/toko.js`. (3 poin)]**
+
+**Hasil:**
+- Membuat `KeranjangContext.jsx` yang menyimpan data keranjang ke `localStorage`, sehingga item tetap bertahan saat navigasi atau refresh halaman.
+- Menambahkan tombol "🛒 Tambah ke keranjang" pada komponen `PilihanPesanWhatsApp.jsx` di halaman detail produk.
+- Menyediakan komponen `ModalKeranjang.jsx` (drawer slide/modal) yang memungkinkan pengunjung menambah/mengurangi jumlah item, menghapus item, dan melihat total harga belanja secara akurat.
+- Menyediakan tombol "Pesan Semua via WhatsApp" di keranjang yang menyusun rekap seluruh daftar belanjaan dan total tagihan ke nomor WhatsApp di `lib/toko.js`.
+- Menambahkan tombol ikon keranjang dengan indikator jumlah item di `Header.jsx`.
+
+**Perbaikan:**
+Memastikan subtotal dan total harga belanja dihitung otomatis dengan harga diskon jika produk sedang promo.

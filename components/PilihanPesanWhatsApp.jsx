@@ -3,9 +3,11 @@
 import { useState } from "react";
 import { toko } from "@/lib/toko";
 import { formatRupiah } from "@/lib/format";
+import { useKeranjang } from "@/lib/KeranjangContext";
 
 export default function PilihanPesanWhatsApp({ produk }) {
   const [jumlah, setJumlah] = useState(1);
+  const { tambahItem } = useKeranjang();
 
   // US-19: Cek status ketersediaan stok
   const isHabis =
@@ -29,6 +31,10 @@ export default function PilihanPesanWhatsApp({ produk }) {
 Apakah produk ini masih tersedia?`;
 
   const urlWhatsApp = `https://wa.me/${nomor}?text=${encodeURIComponent(pesan)}`;
+
+  const handleTambahKeranjang = () => {
+    tambahItem(produk, jumlah, varian);
+  };
 
   return (
     <div className="flex flex-col gap-4 rounded-2xl border border-garis bg-permukaan/50 p-4 sm:p-5">
@@ -107,7 +113,7 @@ Apakah produk ini masih tersedia?`;
         <span className="font-bold text-harga">{formatRupiah(totalHarga)}</span>
       </div>
 
-      {/* US-19: Tombol Pesan WhatsApp dinonaktifkan jika stok habis */}
+      {/* Aksi: Tambah ke Keranjang (US-21) & Pesan WhatsApp Langsung */}
       {isHabis ? (
         <button
           type="button"
@@ -117,14 +123,23 @@ Apakah produk ini masih tersedia?`;
           Stok Habis (Tidak Dapat Dipesan)
         </button>
       ) : (
-        <a
-          href={urlWhatsApp}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex w-full items-center justify-center rounded-xl bg-utama px-5 py-3.5 font-semibold text-white transition hover:bg-utama-gelap"
-        >
-          Pesan via WhatsApp
-        </a>
+        <div className="flex flex-col gap-2 sm:flex-row">
+          <button
+            type="button"
+            onClick={handleTambahKeranjang}
+            className="inline-flex flex-1 items-center justify-center gap-1.5 rounded-xl border-2 border-utama bg-latar px-4 py-3 font-semibold text-utama transition hover:bg-utama/10"
+          >
+            <span>🛒</span> Tambah ke keranjang
+          </button>
+          <a
+            href={urlWhatsApp}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex flex-1 items-center justify-center rounded-xl bg-utama px-4 py-3 font-semibold text-white transition hover:bg-utama-gelap"
+          >
+            Pesan sekarang
+          </a>
+        </div>
       )}
     </div>
   );

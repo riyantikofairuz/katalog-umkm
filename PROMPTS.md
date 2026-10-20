@@ -189,3 +189,19 @@ Kriteria selesai:
 
 **Perbaikan:**
 Memanfaatkan `useTransition` saat navigasi URL pencarian/kategori agar transisi filter terasa halus dan responsif.
+
+## US-12 Pilih jumlah atau varian
+**[Prompt:Sebagai pengunjung, saya ingin memilih jumlah atau varian sebelum memesan, dan pilihan itu ikut tertulis di pesan WhatsApp.
+Bernilai 10 poin.
+Kriteria selesai:
+- Pengunjung bisa memilih jumlah atau varian sebelum memesan. (5 poin)
+- Pilihan itu ikut tertulis di pesan WhatsApp. (5 poin)]**
+
+**Hasil:**
+- Membuat komponen client `PilihanPesanWhatsApp.jsx` pada halaman detail produk `app/produk/[id]/page.jsx`.
+- Menyediakan antarmuka interaktif untuk memilih varian produk ("Reguler", "Spesial", "Hemat / Grosir") dan tombol +/- untuk mengatur kuantitas/jumlah pemesanan.
+- Menghitung subtotal harga secara dinamis sesuai jumlah yang dipilih.
+- Menyusun format pesan WhatsApp yang memuat nama produk, varian yang dipilih, jumlah barang, dan total harga ke tautan `https://wa.me/...`.
+
+**Perbaikan:**
+Memastikan pesan teks WhatsApp di-encode dengan aman menggunakan `encodeURIComponent` dan nomor WhatsApp toko tetap dinormalisasi dari `lib/toko.js`.

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import TombolWhatsApp from "@/components/TombolWhatsApp";
+import PilihanPesanWhatsApp from "@/components/PilihanPesanWhatsApp";
 import { formatRupiah } from "@/lib/format";
 import { buatKlienServer } from "@/lib/supabase";
 
@@ -37,7 +37,7 @@ export default async function HalamanDetailProduk({ params }) {
           {formatRupiah(produk.harga)}
         </p>
         <p className="max-w-prose leading-relaxed text-teks-lembut">{produk.deskripsi}</p>
-        <TombolWhatsApp produk={produk} />
+        <PilihanPesanWhatsApp produk={produk} />
       </div>
     </article>
   );

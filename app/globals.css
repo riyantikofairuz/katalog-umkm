@@ -4,9 +4,7 @@
   Token desain. Ganti nilai di sini untuk menyesuaikan dengan usahamu.
   Penjelasan setiap token ada di DESIGN.md.
 */
-@theme {
-  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
-
+:root {
   --color-latar: #ffffff;
   --color-permukaan: #f1f5f2;
   --color-garis: #dde5e0;
@@ -22,9 +20,45 @@
   --color-bahaya: #b42318;
 }
 
+/* US-25: Palet Mode Gelap */
+html.dark {
+  --color-latar: #121815;
+  --color-permukaan: #1a221e;
+  --color-garis: #2a3530;
+  --color-teks: #e9f0ec;
+  --color-teks-lembut: #9ab0a4;
+
+  --color-utama: #2ca077;
+  --color-utama-gelap: #238361;
+
+  --color-harga: #ffd188;
+  --color-harga-latar: #38280f;
+
+  --color-bahaya: #f04438;
+}
+
+@theme {
+  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+
+  --color-latar: var(--color-latar);
+  --color-permukaan: var(--color-permukaan);
+  --color-garis: var(--color-garis);
+  --color-teks: var(--color-teks);
+  --color-teks-lembut: var(--color-teks-lembut);
+
+  --color-utama: var(--color-utama);
+  --color-utama-gelap: var(--color-utama-gelap);
+
+  --color-harga: var(--color-harga);
+  --color-harga-latar: var(--color-harga-latar);
+
+  --color-bahaya: var(--color-bahaya);
+}
+
 html {
   color: var(--color-teks);
   background: var(--color-latar);
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 :focus-visible {

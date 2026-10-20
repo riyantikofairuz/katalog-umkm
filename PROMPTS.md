@@ -323,3 +323,18 @@ Kriteria selesai:
 
 **Perbaikan:**
 Mendukung pengecekan stok yang fleksibel (baik dari kolom teks `status` maupun angka `stok`) agar kompatibel dengan data yang ada di database.
+
+## US-20 Harga coret dan badge
+**[Prompt:Sebagai pengunjung, saya ingin melihat harga diskon dan label produk, supaya saya tahu mana yang sedang promo atau baru.
+Bernilai 5 poin.
+Kriteria selesai:
+- Produk bisa punya harga diskon, dan harga normal tampil dicoret di kartu dan halaman detail. (3 poin)
+- Badge "Baru" atau "Terlaris" tampil berdasarkan data produk. (2 poin)]**
+
+**Hasil:**
+- Menambahkan logika harga diskon pada `KartuProduk.jsx` dan `app/produk/[id]/page.jsx`: harga normal ditampilkan dengan format dicoret (`line-through`) dan harga promo menjadi harga utama.
+- Menampilkan label badge "Baru", "Terlaris", atau "Diskon" di sudut foto produk kartu maupun di sebelah kategori pada halaman detail.
+- Menyesuaikan harga yang dikirim ke pemesanan WhatsApp agar otomatis menggunakan harga final setelah diskon.
+
+**Perbaikan:**
+Memberikan palet warna badge yang tegas dan harmonis (`bg-amber-600` untuk Terlaris, `bg-utama` untuk Baru, dan `bg-rose-600` untuk Diskon) sesuai aturan desain.

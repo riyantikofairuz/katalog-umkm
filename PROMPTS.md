@@ -239,3 +239,22 @@ Kriteria selesai:
 
 **Perbaikan:**
 Menggunakan `useTransition` pada pembuatan deskripsi AI agar memberikan umpan balik visual ("Sedang membuatkan...") dan menonaktifkan tombol selama proses berlangsung.
+
+## US-15 Urutkan produk
+**[Prompt:Sebagai pengunjung, saya ingin mengurutkan produk, supaya cepat menemukan yang murah atau yang terbaru.
+Bernilai 5 poin.
+Kriteria selesai:
+- Ada pilihan urutan: termurah, termahal, terbaru. (3 poin)
+- Urutan diterapkan saat mengambil data (query), bukan hanya di tampilan. (2 poin)]**
+
+**Hasil:**
+- Menambahkan dropdown pilihan urutan ("Terbaru", "Termurah", "Termahal") pada komponen `FilterCariProduk.jsx`.
+- Pilihan urutan disimpan ke URL query string (`?urutan=termurah` / `?urutan=termahal`).
+- Pada `app/page.jsx`, parameter `urutan` diterapkan langsung ke query Supabase:
+  - `termurah`: `.order('harga', { ascending: true })`
+  - `termahal`: `.order('harga', { ascending: false })`
+  - `terbaru`: `.order('created_at', { ascending: false })`
+- Menjamin data diurutkan dari database sebelum dikirim ke tampilan.
+
+**Perbaikan:**
+Menyatukan perubahan urutan dengan pencarian dan filter kategori agar semua parameter pencarian saling bersinergi secara mulus.

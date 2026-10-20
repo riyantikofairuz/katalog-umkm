@@ -6,7 +6,7 @@ import { buatKlienServer } from "@/lib/supabase";
 export const dynamic = "force-dynamic";
 
 export default async function HalamanKatalog({ searchParams }) {
-  const { kategori, q } = (await searchParams) || {};
+  const { kategori, q, urutan = "terbaru" } = (await searchParams) || {};
   let daftarProduk = [];
   let semuaKategori = [];
   let pesanError = null;
@@ -40,7 +40,17 @@ export default async function HalamanKatalog({ searchParams }) {
       query = query.ilike("nama", `%${q.trim()}%`);
     }
 
-    const { data, error } = await query.order("created_at", { ascending: false });
+    // US-15: Pengurutan diterapkan pada query database
+    if (urutan === "termurah") {
+      query = query.order("harga", { ascending: true });
+    } else if (urutan === "termahal") {
+      query = query.order("harga", { ascending: false });
+    } else {
+      // Default: terbaru
+      query = query.order("created_at", { ascending: false });
+    }
+
+    const { data, error } = await query;
 
     if (error) {
       pesanError = `Gagal memuat produk: ${error.message}`;
@@ -51,7 +61,11 @@ export default async function HalamanKatalog({ searchParams }) {
     pesanError = `Gagal memuat produk: ${err.message}`;
   }
 
-  const sedangFilter = Boolean((kategori && kategori.trim()) || (q && q.trim()));
+  const sedangFilter = Boolean(
+    (kategori && kategori.trim()) ||
+    (q && q.trim()) ||
+    (urutan && urutan !== "terbaru")
+  );
 
   return (
     <>
@@ -72,6 +86,7 @@ export default async function HalamanKatalog({ searchParams }) {
             kategoriList={semuaKategori}
             kategoriTerpilih={kategori || ""}
             kataKunci={q || ""}
+            urutanTerpilih={urutan || "terbaru"}
           />
         </div>
 

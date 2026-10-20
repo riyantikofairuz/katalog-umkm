@@ -155,3 +155,24 @@ export async function ubahProduk(id, prevState, formData) {
   redirect("/admin");
 }
 
+export async function hapusProduk(id) {
+  const supabase = await buatKlienAdmin();
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
+
+  if (userError || !user) {
+    return { error: "Aksi ditolak: Anda harus login sebagai admin." };
+  }
+
+  const { error } = await supabase.from("produk").delete().eq("id", id);
+
+  if (error) {
+    return { error: `Gagal menghapus produk: ${error.message}` };
+  }
+
+  redirect("/admin");
+}
+
+

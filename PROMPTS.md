@@ -157,3 +157,20 @@ Kriteria selesai:
 
 **Perbaikan:**
 Membuat komponen perantara `FormUbahProduk.jsx` untuk mengikat ID produk (`ubahProduk.bind(null, produk.id)`) dengan `useActionState` secara bersih dan modular.
+
+## US-10 Hapus produk
+**[Prompt:Sebagai admin, saya ingin menghapus produk.
+Bernilai 10 poin.
+Kriteria selesai:
+- Tombol "Hapus" meminta konfirmasi. (4 poin)
+- Produk terhapus dari database. (3 poin)
+- Aksinya terlindungi login: tanpa login ditolak oleh server. (3 poin)]**
+
+**Hasil:**
+- Membuat komponen client `TombolHapusProduk.jsx` yang memicu dialog konfirmasi (`window.confirm`) dengan pesan konfirmasi yang jelas memuat nama produk sebelum eksekusi penghapusan.
+- Membuat Server Action `hapusProduk(id)` di `app/admin/actions.js` yang memverifikasi login admin di server melalui `buatKlienAdmin()`.
+- Menghapus baris produk terkait dari tabel `produk` di Supabase dan mengarahkan kembali/me-refresh halaman `/admin`.
+- Memperbarui komponen `TabelProduk.jsx` agar menggunakan `TombolHapusProduk`.
+
+**Perbaikan:**
+Menggunakan `useTransition` pada tombol konfirmasi hapus agar memberikan feedback status ("Menghapus...") saat penghapusan sedang diproses.

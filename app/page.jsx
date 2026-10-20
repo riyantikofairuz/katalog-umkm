@@ -21,25 +21,15 @@ export default async function HalamanKatalog({ searchParams }) {
   try {
     const supabase = buatKlienServer();
 
-    // Ambil daftar unik kategori dari tabel produk
-    const { data: produkKategori } = await supabase
-      .from("produk")
-      .select("kategori");
-
-    if (produkKategori) {
-      semuaKategori = Array.from(
-        new Set(
-          produkKategori
-            .map((p) => p.kategori)
-            .filter((kat) => Boolean(kat && kat.trim()))
-        )
-      ).sort();
-    }
+    // Ambil daftar kategori dari master data (US-31)
+    const { ambilDaftarKategori } = await import("@/lib/kategori");
+    semuaKategori = await ambilDaftarKategori();
 
     // Query produk dengan hitungan total (count) dan filter
     let query = supabase
       .from("produk")
-      .select("*", { count: "exact" });
+      .select("*", { count: "exact" })
+      .neq("deskripsi", "__KATEGORI_SYS__");
 
     if (kategori && kategori.trim()) {
       query = query.eq("kategori", kategori.trim());

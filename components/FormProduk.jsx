@@ -62,12 +62,43 @@ export default function FormProduk({
         required
       />
 
-      <Input
-        label="Kategori"
-        name="kategori"
-        value={kategori}
-        onChange={(e) => setKategori(e.target.value)}
-      />
+      <div className="flex flex-col gap-1.5">
+        <label className="text-sm font-semibold text-teks">Kategori</label>
+        <div className="flex flex-col gap-2">
+          <input
+            list="list-kategori"
+            name="kategori"
+            value={kategori}
+            onChange={(e) => setKategori(e.target.value)}
+            placeholder="Pilih atau ketik kategori baru..."
+            className="w-full rounded-lg border border-garis bg-latar px-3 py-2.5 text-base text-teks placeholder:text-teks-lembut focus:border-utama focus:outline-none"
+          />
+          <datalist id="list-kategori">
+            {(produk.daftarKategori || []).map((kat) => (
+              <option key={kat} value={kat} />
+            ))}
+          </datalist>
+          {(produk.daftarKategori || []).length > 0 && (
+            <div className="flex flex-wrap items-center gap-1.5">
+              <span className="text-xs text-teks-lembut">Pilihan cepat:</span>
+              {(produk.daftarKategori || []).map((kat) => (
+                <button
+                  key={kat}
+                  type="button"
+                  onClick={() => setKategori(kat)}
+                  className={`rounded-md px-2 py-0.5 text-xs font-medium transition ${
+                    kategori === kat
+                      ? "bg-utama text-white"
+                      : "border border-garis/60 bg-permukaan text-teks hover:border-utama hover:text-utama"
+                  }`}
+                >
+                  {kat}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
 
       <div className="flex flex-col gap-2 rounded-xl border border-garis/60 bg-permukaan/50 p-4">
         <label className="text-sm font-semibold text-teks">

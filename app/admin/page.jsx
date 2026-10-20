@@ -7,10 +7,15 @@ export const dynamic = "force-dynamic";
 
 export default async function HalamanAdmin() {
   const supabase = await buatKlienAdmin();
-  const { data: daftarProduk = [], error } = await supabase
+  const { data: semuaData = [], error } = await supabase
     .from("produk")
     .select("*")
     .order("created_at", { ascending: false });
+
+  // Saring record produk reguler (bukan placeholder kategori sistem)
+  const daftarProduk = (semuaData || []).filter(
+    (p) => p.deskripsi !== "__KATEGORI_SYS__"
+  );
 
   // US-30: Hitung ringkasan produk dan jumlah produk per kategori
   const totalProduk = daftarProduk.length;

@@ -102,4 +102,5 @@ Urutan yang disarankan: US-01, US-02, US-03, US-04, US-05, US-06, lalu fitur bon
   - **US-28:** Halaman 404 kustom dan skeleton loading
   - **US-29:** Upload foto produk ke Supabase Storage
   - **US-30:** Dashboard ringkasan admin (total produk & jumlah per kategori)
+  - **US-31:** Kelola kategori (tambah, ubah, hapus dengan proteksi & integrasi form)
 

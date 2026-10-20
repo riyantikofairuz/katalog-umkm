@@ -315,5 +315,136 @@ Ketentuan:
   }
 }
 
+// US-31: Server Actions untuk Kelola Kategori
+export async function tambahKategori(prevState, formData) {
+  const supabase = await buatKlienAdmin();
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
+
+  if (userError || !user) {
+    return { error: "Aksi ditolak: Anda harus login sebagai admin." };
+  }
+
+  const namaKategori = formData.get("nama")?.toString().trim();
+  if (!namaKategori) {
+    return { error: "Nama kategori tidak boleh kosong." };
+  }
+
+  // Coba insert ke tabel kategori jika ada
+  const { error: insertCatError } = await supabase
+    .from("kategori")
+    .insert({ nama: namaKategori });
+
+  if (insertCatError) {
+    // Jika tabel kategori tidak ada (status 404/PGRST205),
+    // simpan entitas master kategori menggunakan record khusus di tabel produk
+    const { error: insertProdError } = await supabase.from("produk").insert({
+      nama: `[KATEGORI] ${namaKategori}`,
+      harga: 0,
+      kategori: namaKategori,
+      deskripsi: "__KATEGORI_SYS__",
+    });
+
+    if (insertProdError) {
+      return { error: `Gagal menambah kategori: ${insertProdError.message}` };
+    }
+  }
+
+  redirect("/admin/kategori");
+}
+
+export async function ubahKategori(namaLama, prevState, formData) {
+  const supabase = await buatKlienAdmin();
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
+
+  if (userError || !user) {
+    return { error: "Aksi ditolak: Anda harus login sebagai admin." };
+  }
+
+  const namaBaru = formData.get("nama")?.toString().trim();
+  if (!namaBaru) {
+    return { error: "Nama kategori baru tidak boleh kosong." };
+  }
+
+  if (namaBaru === namaLama) {
+    return { error: "Nama kategori baru tidak boleh sama dengan nama lama." };
+  }
+
+  // Update seluruh produk yang menggunakan kategori ini
+  const { error: updateProdukError } = await supabase
+    .from("produk")
+    .update({ kategori: namaBaru })
+    .eq("kategori", namaLama);
+
+  if (updateProdukError) {
+    return { error: `Gagal memperbarui kategori pada produk: ${updateProdukError.message}` };
+  }
+
+  // Update juga nama placeholder jika ada
+  await supabase
+    .from("produk")
+    .update({ nama: `[KATEGORI] ${namaBaru}` })
+    .eq("deskripsi", "__KATEGORI_SYS__")
+    .eq("kategori", namaBaru);
+
+  // Coba update juga di tabel kategori jika tabel tersebut tersedia
+  await supabase
+    .from("kategori")
+    .update({ nama: namaBaru })
+    .eq("nama", namaLama);
+
+  redirect("/admin/kategori");
+}
+
+export async function hapusKategori(namaKategori) {
+  const supabase = await buatKlienAdmin();
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
+
+  if (userError || !user) {
+    return { error: "Aksi ditolak: Anda harus login sebagai admin." };
+  }
+
+  // Validasi: Cek apakah kategori masih dipakai oleh produk reguler (bukan placeholder)
+  const { count, error: countError } = await supabase
+    .from("produk")
+    .select("id", { count: "exact", head: true })
+    .eq("kategori", namaKategori)
+    .neq("deskripsi", "__KATEGORI_SYS__");
+
+  if (countError) {
+    return { error: `Gagal memeriksa pemakaian kategori: ${countError.message}` };
+  }
+
+  if (count && count > 0) {
+    return {
+      error: `Kategori "${namaKategori}" tidak bisa dihapus karena masih digunakan oleh ${count} produk. Silakan ubah atau pindahkan kategori produk tersebut terlebih dahulu.`,
+    };
+  }
+
+  // Hapus dari tabel kategori jika ada
+  await supabase
+    .from("kategori")
+    .delete()
+    .eq("nama", namaKategori);
+
+  // Hapus juga placeholder record jika ada
+  await supabase
+    .from("produk")
+    .delete()
+    .eq("kategori", namaKategori)
+    .eq("deskripsi", "__KATEGORI_SYS__");
+
+  redirect("/admin/kategori");
+}
+
+
 
 

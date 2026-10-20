@@ -563,3 +563,24 @@ Kriteria selesai:
 
 **Perbaikan:**
 Menampilkan badge hitungan kategori dengan warna token tema yang adaptif untuk mode terang dan mode gelap agar dashboard tetap bersih dan nyaman dilihat.
+
+## US-31 Kelola kategori
+
+**Prompt:**
+Sebagai admin, saya ingin mengatur daftar kategori, supaya produk terkelompok rapi.
+Bernilai 15 poin.
+Kriteria selesai:
+- Admin bisa menambah kategori. (4 poin)
+- Admin bisa mengubah nama kategori. (3 poin)
+- Admin bisa menghapus kategori, dan kategori yang masih dipakai produk ditolak atau ditangani dengan jelas. (4 poin)
+- Daftar kategori di form produk berasal dari data ini, dan semua aksi memeriksa login di server. (4 poin)
+
+**Hasil:**
+- Membuat modul kelola kategori di `app/admin/kategori/page.jsx` dan komponen client `KelolaKategoriClient.jsx` dengan menu navigasi baru "Kategori" di `NavAdmin.jsx`.
+- Mengimplementasikan aksi server `tambahKategori`, `ubahKategori`, dan `hapusKategori` di `app/admin/actions.js` dengan verifikasi sesi admin Supabase di sisi server.
+- Pada fitur ubah kategori, nama kategori di seluruh produk terkait ikut diperbarui secara otomatis.
+- Pada fitur hapus kategori, sistem memeriksa apakah kategori masih dipakai oleh produk; jika masih ada produk yang menggunakan kategori tersebut, penghapusan ditolak dengan pesan peringatan yang informatif.
+- Mengintegrasikan data kategori ke formulir tambah dan ubah produk (`FormProduk.jsx`) dengan input datalist dan tombol pilihan cepat kategori.
+
+**Perbaikan:**
+Menyediakan helper fleksibel di `lib/kategori.js` yang secara otomatis mengenali data kategori dari tabel master maupun kategori unik produk di database.

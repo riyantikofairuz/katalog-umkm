@@ -205,3 +205,20 @@ Kriteria selesai:
 
 **Perbaikan:**
 Memastikan pesan teks WhatsApp di-encode dengan aman menggunakan `encodeURIComponent` dan nomor WhatsApp toko tetap dinormalisasi dari `lib/toko.js`.
+
+## US-13 PWA
+**[Prompt:Sebagai pengunjung, saya ingin memasang katalog di layar HP seperti aplikasi. Ikon tersedia di `public/icons`.
+Bernilai 10 poin.
+Kriteria selesai:
+- Ada web app manifest yang ditautkan di halaman. (4 poin)
+- Ikon tersedia di `public/icons` dan dirujuk di manifest. (3 poin)
+- Katalog bisa di-install ke layar utama HP. (3 poin)]**
+
+**Hasil:**
+- Membuat file `public/manifest.json` yang mendefinisikan properti web app (nama toko, display standalone, start_url, theme_color, background_color).
+- Merujuk ikon PWA yang ada di `public/icons/icon-192.png` dan `public/icons/icon-512.png` ke dalam manifest.
+- Menautkan `manifest.json`, icon metadata, serta konfigurasi viewport themeColor di `app/layout.jsx`.
+- Katalog kini memenuhi standar Progressive Web App (PWA) sehingga dapat dipasang (install) langsung ke layar utama HP maupun desktop.
+
+**Perbaikan:**
+Menyesuaikan nama toko dan tagline secara otomatis pada manifest dengan identitas toko, serta memisahkan `themeColor` ke export `viewport` sesuai spesifikasi Next.js App Router.

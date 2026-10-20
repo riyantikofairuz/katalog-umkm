@@ -104,4 +104,5 @@ Urutan yang disarankan: US-01, US-02, US-03, US-04, US-05, US-06, lalu fitur bon
   - **US-30:** Dashboard ringkasan admin (total produk & jumlah per kategori)
   - **US-31:** Kelola kategori (tambah, ubah, hapus dengan proteksi & integrasi form)
   - **US-32:** Aktif atau nonaktifkan produk (disembunyikan dari katalog & 404 pada detail)
+  - **US-33:** Cari dan paginasi di list admin (tersinkron di URL & query database)
 

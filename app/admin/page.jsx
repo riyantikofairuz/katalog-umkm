@@ -1,29 +1,53 @@
 import NavAdmin from "@/components/NavAdmin";
 import TabelProduk from "@/components/TabelProduk";
 import Tombol from "@/components/Tombol";
+import PencarianAdmin from "@/components/PencarianAdmin";
+import PaginasiAdmin from "@/components/PaginasiAdmin";
 import { buatKlienAdmin } from "@/lib/supabase";
 
 export const dynamic = "force-dynamic";
 
-export default async function HalamanAdmin() {
+const JUMLAH_PER_HALAMAN = 10;
+
+export default async function HalamanAdmin({ searchParams }) {
+  const { q = "", halaman = "1" } = (await searchParams) || {};
+  const nomorHalaman = Math.max(1, parseInt(halaman, 10) || 1);
+
   const supabase = await buatKlienAdmin();
-  const { data: semuaData = [], error } = await supabase
+
+  // US-30: Ringkasan statistik (seluruh produk tanpa filter)
+  const { data: semuaDataRingkasan = [] } = await supabase
     .from("produk")
-    .select("*")
-    .order("created_at", { ascending: false });
+    .select("kategori, deskripsi")
+    .neq("deskripsi", "__KATEGORI_SYS__");
 
-  // Saring record produk reguler (bukan placeholder kategori sistem)
-  const daftarProduk = (semuaData || []).filter(
-    (p) => p.deskripsi !== "__KATEGORI_SYS__"
-  );
-
-  // US-30: Hitung ringkasan produk dan jumlah produk per kategori
-  const totalProduk = daftarProduk.length;
-  const produkPerKategori = daftarProduk.reduce((acc, p) => {
+  const totalProdukRingkasan = semuaDataRingkasan.length;
+  const produkPerKategori = semuaDataRingkasan.reduce((acc, p) => {
     const kat = p.kategori?.trim() || "Tanpa Kategori";
     acc[kat] = (acc[kat] || 0) + 1;
     return acc;
   }, {});
+
+  // US-33: Query produk dengan pencarian database dan paginasi
+  let query = supabase
+    .from("produk")
+    .select("*", { count: "exact" })
+    .neq("deskripsi", "__KATEGORI_SYS__");
+
+  if (q && q.trim()) {
+    query = query.ilike("nama", `%${q.trim()}%`);
+  }
+
+  // Pengurutan terbaru
+  query = query.order("created_at", { ascending: false });
+
+  // Paginasi query database
+  const dari = (nomorHalaman - 1) * JUMLAH_PER_HALAMAN;
+  const sampai = dari + JUMLAH_PER_HALAMAN - 1;
+  query = query.range(dari, sampai);
+
+  const { data: daftarProduk = [], count: totalItem = 0, error } = await query;
+  const totalHalaman = Math.ceil((totalItem || 0) / JUMLAH_PER_HALAMAN);
 
   return (
     <div className="flex flex-col gap-6 py-8">
@@ -37,7 +61,7 @@ export default async function HalamanAdmin() {
             Total Produk
           </p>
           <div className="mt-2 flex items-baseline gap-2">
-            <span className="text-3xl font-black text-teks">{totalProduk}</span>
+            <span className="text-3xl font-black text-teks">{totalProdukRingkasan}</span>
             <span className="text-xs text-teks-lembut">item terdaftar</span>
           </div>
         </div>
@@ -80,10 +104,25 @@ export default async function HalamanAdmin() {
         </div>
       </div>
 
+      {/* Header Kelola Produk & Tambah Produk */}
       <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
         <h1 className="text-2xl font-extrabold">Kelola Produk</h1>
         {/* US-08: tambah produk */}
         <Tombol href="/admin/produk/baru">Tambah produk</Tombol>
+      </div>
+
+      {/* US-33: Bar Pencarian dan Info Hasil */}
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 bg-permukaan p-3 rounded-xl border border-garis/60">
+        <PencarianAdmin nilaiAwal={q} />
+        <span className="text-xs text-teks-lembut self-center sm:self-auto">
+          Menampilkan {daftarProduk.length} dari {totalItem} produk
+          {q && (
+            <span>
+              {" "}
+              untuk kata kunci &ldquo;<strong className="text-teks">{q}</strong>&rdquo;
+            </span>
+          )}
+        </span>
       </div>
 
       {error ? (
@@ -91,11 +130,22 @@ export default async function HalamanAdmin() {
           Gagal memuat produk: {error.message}
         </div>
       ) : daftarProduk.length === 0 ? (
-        <p className="py-8 text-center text-teks-lembut">Belum ada produk</p>
+        <p className="py-8 text-center text-teks-lembut">
+          {q ? `Tidak ada produk yang cocok dengan "${q}"` : "Belum ada produk"}
+        </p>
       ) : (
-        <TabelProduk daftarProduk={daftarProduk} />
+        <>
+          <TabelProduk daftarProduk={daftarProduk} />
+          {/* US-33: Paginasi Hasil List Admin */}
+          <PaginasiAdmin
+            halamanSaatIni={nomorHalaman}
+            totalHalaman={totalHalaman}
+            q={q}
+          />
+        </>
       )}
     </div>
   );
 }
+
 

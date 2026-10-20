@@ -604,3 +604,22 @@ Kriteria selesai:
 
 **Perbaikan:**
 Menampilkan status badge "Nonaktif (Disembunyikan)" serta efek visual baris redup di panel admin agar admin dapat dengan cepat membedakan produk mana saja yang sedang disembunyikan dari publik.
+
+## US-33 Cari dan paginasi di list admin
+
+**Prompt:**
+Sebagai admin, saya ingin mencari produk di halaman admin, supaya cepat menemukan yang saya cari.
+Bernilai 10 poin.
+Kriteria selesai:
+- Ada kolom cari di `/admin` yang menyaring lewat query database. (4 poin)
+- Daftar produk dipaginasi. (3 poin)
+- Kata kunci dan nomor halaman tersimpan di URL, jadi tetap ada setelah dimuat ulang. (3 poin)
+
+**Hasil:**
+- Membuat komponen client `PencarianAdmin.jsx` dengan tombol cari, tombol reset instan, dan integrasi parameter URL (`?q=...`) menggunakan Next.js `useRouter` dan `useSearchParams`.
+- Membuat komponen `PaginasiAdmin.jsx` untuk navigasi antar halaman produk admin (`?halaman=...`).
+- Menghubungkan parameter pencarian dan nomor halaman ke query database Supabase di `app/admin/page.jsx` menggunakan klausa `.ilike("nama", ...)` dan batas data `.range(dari, sampai)`.
+- Kata kunci pencarian dan nomor halaman bertahan di URL sehingga saat halaman dimuat ulang (refresh), kondisi filter tetap sama.
+
+**Perbaikan:**
+Menambahkan informasi jumlah hasil pencarian di atas tabel (misal: "Menampilkan 10 dari 60 produk") untuk memberikan kejelasan konteks data kepada admin.

@@ -77,4 +77,22 @@ Urutan yang disarankan: US-01, US-02, US-03, US-04, US-05, US-06, lalu fitur bon
 - **Nama usaha:** Toko Emas
 - **Pembuat:** Fairuz Riyantiko
 - **Link aplikasi:** https://katalog-umkm-ecru.vercel.app/
-- **Fitur bonus yang dikerjakan:** US-07 (List produk database), US-08 (Tambah produk), US-09 (Ubah produk), US-10 (Hapus produk), US-11 (Filter kategori & pencarian), US-12 (Pilih jumlah & varian), US-13 (PWA), US-14 (Deskripsi AI Gemini), US-15 (Urutkan produk), US-16 (Paginasi database), US-17 (Produk terkait), US-18 (Galeri multi-foto), US-19 (Status stok), US-20 (Harga coret & badge), US-21 (Keranjang belanja WhatsApp), US-22 (Halaman Tentang & kontak)
+- **Fitur bonus yang dikerjakan:**
+  - **US-07:** List produk admin dari database
+  - **US-08:** Tambah produk dari admin
+  - **US-09:** Ubah data produk
+  - **US-10:** Hapus produk dengan konfirmasi
+  - **US-11:** Filter kategori dan pencarian produk
+  - **US-12:** Pilih jumlah dan varian produk sebelum pesan
+  - **US-13:** PWA (Progressive Web App - Web App Manifest & Icons)
+  - **US-14:** Deskripsi produk otomatis dengan AI (Gemini)
+  - **US-15:** Urutkan produk (termurah, termahal, terbaru)
+  - **US-16:** Paginasi katalog dari query database
+  - **US-17:** Produk terkait di halaman detail
+  - **US-18:** Galeri beberapa foto produk dengan thumbnail
+  - **US-19:** Penanda status stok habis & nonaktifkan tombol pesan
+  - **US-20:** Harga coret diskon dan badge produk (Baru/Terlaris)
+  - **US-21:** Keranjang belanja & pesan semua via WhatsApp
+  - **US-22:** Halaman Tentang toko dan kontak resmi
+  - **US-23:** Bagikan atau salin link produk
+

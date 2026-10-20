@@ -128,27 +128,42 @@ export async function tambahProduk(prevState, formData) {
     return { error: "Aksi ditolak: Anda harus login sebagai admin." };
   }
 
-  const nama = formData.get("nama")?.toString().trim();
-  const hargaRaw = formData.get("harga")?.toString().trim();
-  const kategori = formData.get("kategori")?.toString().trim() || null;
-  let foto_url = formData.get("foto_url")?.toString().trim() || null;
-  const deskripsi = formData.get("deskripsi")?.toString().trim() || null;
+  const nama = formData.get("nama")?.toString().trim() || "";
+  const hargaRaw = formData.get("harga")?.toString().trim() || "";
+  const kategori = formData.get("kategori")?.toString().trim() || "";
+  let foto_url = formData.get("foto_url")?.toString().trim() || "";
+  const deskripsi = formData.get("deskripsi")?.toString().trim() || "";
   const fileFoto = formData.get("file_foto");
 
+  // US-34: Validasi per field di sisi server
+  const fieldErrors = {};
   if (!nama) {
-    return { error: "Nama produk wajib diisi." };
+    fieldErrors.nama = "Nama produk wajib diisi.";
   }
 
   const harga = parseInt(hargaRaw, 10);
-  if (isNaN(harga) || harga < 0) {
-    return { error: "Harga produk harus berupa angka positif." };
+  if (!hargaRaw) {
+    fieldErrors.harga = "Harga produk wajib diisi.";
+  } else if (isNaN(harga) || harga < 0) {
+    fieldErrors.harga = "Harga produk harus berupa angka positif.";
+  }
+
+  // Jika ada error validasi per field, kembalikan fieldErrors dan values agar nilai tidak hilang
+  if (Object.keys(fieldErrors).length > 0) {
+    return {
+      fieldErrors,
+      values: { nama, harga: hargaRaw, kategori, foto_url, deskripsi },
+    };
   }
 
   // Jika admin mengunggah file foto baru
   if (fileFoto && typeof fileFoto === "object" && fileFoto.size > 0) {
     const uploadRes = await unggahFotoStorage(fileFoto);
     if (uploadRes.error) {
-      return { error: uploadRes.error };
+      return {
+        fieldErrors: { foto_url: uploadRes.error },
+        values: { nama, harga: hargaRaw, kategori, foto_url, deskripsi },
+      };
     }
     if (uploadRes.url) {
       foto_url = uploadRes.url;
@@ -158,13 +173,16 @@ export async function tambahProduk(prevState, formData) {
   const { error } = await supabase.from("produk").insert({
     nama,
     harga,
-    kategori,
-    foto_url,
-    deskripsi,
+    kategori: kategori || null,
+    foto_url: foto_url || null,
+    deskripsi: deskripsi || null,
   });
 
   if (error) {
-    return { error: `Gagal menambah produk: ${error.message}` };
+    return {
+      error: `Gagal menambah produk: ${error.message}`,
+      values: { nama, harga: hargaRaw, kategori, foto_url, deskripsi },
+    };
   }
 
   redirect("/admin");
@@ -181,27 +199,42 @@ export async function ubahProduk(id, prevState, formData) {
     return { error: "Aksi ditolak: Anda harus login sebagai admin." };
   }
 
-  const nama = formData.get("nama")?.toString().trim();
-  const hargaRaw = formData.get("harga")?.toString().trim();
-  const kategori = formData.get("kategori")?.toString().trim() || null;
-  let foto_url = formData.get("foto_url")?.toString().trim() || null;
-  const deskripsi = formData.get("deskripsi")?.toString().trim() || null;
+  const nama = formData.get("nama")?.toString().trim() || "";
+  const hargaRaw = formData.get("harga")?.toString().trim() || "";
+  const kategori = formData.get("kategori")?.toString().trim() || "";
+  let foto_url = formData.get("foto_url")?.toString().trim() || "";
+  const deskripsi = formData.get("deskripsi")?.toString().trim() || "";
   const fileFoto = formData.get("file_foto");
 
+  // US-34: Validasi per field di sisi server
+  const fieldErrors = {};
   if (!nama) {
-    return { error: "Nama produk wajib diisi." };
+    fieldErrors.nama = "Nama produk wajib diisi.";
   }
 
   const harga = parseInt(hargaRaw, 10);
-  if (isNaN(harga) || harga < 0) {
-    return { error: "Harga produk harus berupa angka positif." };
+  if (!hargaRaw) {
+    fieldErrors.harga = "Harga produk wajib diisi.";
+  } else if (isNaN(harga) || harga < 0) {
+    fieldErrors.harga = "Harga produk harus berupa angka positif.";
+  }
+
+  // Jika ada error validasi per field, kembalikan fieldErrors dan values agar nilai tidak hilang
+  if (Object.keys(fieldErrors).length > 0) {
+    return {
+      fieldErrors,
+      values: { nama, harga: hargaRaw, kategori, foto_url, deskripsi },
+    };
   }
 
   // Jika admin mengunggah file foto baru
   if (fileFoto && typeof fileFoto === "object" && fileFoto.size > 0) {
     const uploadRes = await unggahFotoStorage(fileFoto);
     if (uploadRes.error) {
-      return { error: uploadRes.error };
+      return {
+        fieldErrors: { foto_url: uploadRes.error },
+        values: { nama, harga: hargaRaw, kategori, foto_url, deskripsi },
+      };
     }
     if (uploadRes.url) {
       foto_url = uploadRes.url;
@@ -213,14 +246,17 @@ export async function ubahProduk(id, prevState, formData) {
     .update({
       nama,
       harga,
-      kategori,
-      foto_url,
-      deskripsi,
+      kategori: kategori || null,
+      foto_url: foto_url || null,
+      deskripsi: deskripsi || null,
     })
     .eq("id", id);
 
   if (error) {
-    return { error: `Gagal memperbarui produk: ${error.message}` };
+    return {
+      error: `Gagal memperbarui produk: ${error.message}`,
+      values: { nama, harga: hargaRaw, kategori, foto_url, deskripsi },
+    };
   }
 
   redirect("/admin");

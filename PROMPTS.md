@@ -623,3 +623,24 @@ Kriteria selesai:
 
 **Perbaikan:**
 Menambahkan informasi jumlah hasil pencarian di atas tabel (misal: "Menampilkan 10 dari 60 produk") untuk memberikan kejelasan konteks data kepada admin.
+
+## US-34 Validasi form admin di server
+
+**Prompt:**
+Sebagai admin, saya ingin form menolak data yang salah, supaya katalog tidak berisi data rusak.
+Bernilai 10 poin.
+Kriteria selesai:
+- Server memvalidasi input: nama wajib, harga angka positif. (4 poin)
+- Pesan error tampil per field di bawah input yang salah. (3 poin)
+- Nilai yang sudah diisi tidak hilang saat terjadi error. (3 poin)
+
+**Hasil:**
+- Mengembangkan validasi server komprehensif pada Server Actions `tambahProduk` dan `ubahProduk` di `app/admin/actions.js`:
+  - Kolom nama divalidasi tidak boleh kosong.
+  - Kolom harga divalidasi wajib diisi, berupa angka valid, dan bernilai positif (>= 0).
+- Mengembalikan objek `fieldErrors` berisi pesan error spesifik per-kolom (misalnya `fieldErrors.nama`, `fieldErrors.harga`, `fieldErrors.foto_url`).
+- Memperbarui komponen `Input.jsx` untuk menampilkan label pesan error merah (`error`) tepat di bawah elemen input yang bersangkutan dengan border merah penanda.
+- Mengembalikan objek `values` dari server ketika terjadi error validasi, dan menyimpannya di state `FormProduk.jsx` sehingga seluruh nilai input yang sudah diisi pengguna tetap terjaga dan tidak hilang.
+
+**Perbaikan:**
+Menyinkronkan state lokal form dengan pembaruan `values` dari respons server action menggunakan mekanisme `prevValues` agar pergantian state berjalan mulus tanpa mereset input yang sudah benar.

@@ -14,6 +14,8 @@ export default function FormUbahProduk({ produk }) {
       labelTombol="Simpan perubahan"
       action={formAction}
       error={state?.error}
+      fieldErrors={state?.fieldErrors}
+      values={state?.values}
       isPending={isPending}
     />
   );

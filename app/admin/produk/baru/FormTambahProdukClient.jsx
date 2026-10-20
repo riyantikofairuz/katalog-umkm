@@ -13,6 +13,8 @@ export default function FormTambahProdukClient({ daftarKategori = [] }) {
       labelTombol="Simpan produk"
       action={formAction}
       error={state?.error}
+      fieldErrors={state?.fieldErrors}
+      values={state?.values}
       isPending={isPending}
     />
   );

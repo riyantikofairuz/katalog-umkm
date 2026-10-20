@@ -5,19 +5,34 @@ import Input from "@/components/Input";
 import Tombol from "@/components/Tombol";
 import { buatDeskripsiAI } from "@/app/admin/actions";
 
-// Dipakai untuk tambah produk (US-08), ubah produk (US-09), dan AI generator (US-14)
+// Dipakai untuk tambah produk (US-08), ubah produk (US-09), AI generator (US-14), dan validasi server per field (US-34)
 export default function FormProduk({
   produk = {},
   labelTombol,
   action,
   error,
+  fieldErrors = {},
+  values,
   isPending = false,
 }) {
-  const [nama, setNama] = useState(produk.nama || "");
-  const [kategori, setKategori] = useState(produk.kategori || "");
-  const [deskripsi, setDeskripsi] = useState(produk.deskripsi || "");
+  const [nama, setNama] = useState(values?.nama ?? produk.nama ?? "");
+  const [harga, setHarga] = useState(values?.harga ?? produk.harga ?? "");
+  const [kategori, setKategori] = useState(values?.kategori ?? produk.kategori ?? "");
+  const [fotoUrl, setFotoUrl] = useState(values?.foto_url ?? produk.foto_url ?? "");
+  const [deskripsi, setDeskripsi] = useState(values?.deskripsi ?? produk.deskripsi ?? "");
   const [pesanAI, setPesanAI] = useState(null);
   const [isAiLoading, startAiTransition] = useTransition();
+
+  // Sinkronkan state jika values baru diterima setelah validasi server
+  const [prevValues, setPrevValues] = useState(values);
+  if (values !== prevValues) {
+    setPrevValues(values);
+    if (values?.nama !== undefined) setNama(values.nama);
+    if (values?.harga !== undefined) setHarga(values.harga);
+    if (values?.kategori !== undefined) setKategori(values.kategori);
+    if (values?.foto_url !== undefined) setFotoUrl(values.foto_url);
+    if (values?.deskripsi !== undefined) setDeskripsi(values.deskripsi);
+  }
 
   const handleBuatDeskripsiAI = () => {
     if (!nama.trim()) {
@@ -45,20 +60,25 @@ export default function FormProduk({
         </div>
       )}
 
+      {/* Input Nama Produk dengan Error Per Field (US-34) */}
       <Input
         label="Nama produk"
         name="nama"
         value={nama}
         onChange={(e) => setNama(e.target.value)}
+        error={fieldErrors?.nama}
         required
       />
 
+      {/* Input Harga dengan Error Per Field (US-34) */}
       <Input
         label="Harga (Rp)"
         name="harga"
         type="number"
         min="0"
-        defaultValue={produk.harga}
+        value={harga}
+        onChange={(e) => setHarga(e.target.value)}
+        error={fieldErrors?.harga}
         required
       />
 
@@ -130,7 +150,9 @@ export default function FormProduk({
           label="Link foto manual"
           name="foto_url"
           placeholder="https://... atau /produk/nama-file.svg"
-          defaultValue={produk.foto_url}
+          value={fotoUrl}
+          onChange={(e) => setFotoUrl(e.target.value)}
+          error={fieldErrors?.foto_url}
         />
 
         {produk.foto_url && (

@@ -139,3 +139,21 @@ Kriteria selesai:
 
 **Perbaikan:**
 Menyesuaikan komponen `FormProduk` agar menerima props `action`, `error`, dan `isPending` secara reusable tanpa merusak komponen lain.
+
+## US-09 Ubah produk
+**[Prompt:Sebagai admin, saya ingin mengubah data produk.
+Bernilai 10 poin.
+Kriteria selesai:
+- Form di `/admin/produk/[id]/ubah` terisi data lama. (4 poin)
+- Perubahan tersimpan ke database. (3 poin)
+- Aksinya terlindungi login: tanpa login ditolak oleh server. (3 poin)]**
+
+**Hasil:**
+- Halaman `app/admin/produk/[id]/ubah/page.jsx` mengambil data produk lama dari database Supabase berdasarkan id yang diakses (`const { id } = await params`).
+- Mengisi nilai awal pada input form (`nama`, `harga`, `kategori`, `foto_url`, `deskripsi`) dari data lama produk.
+- Menghapus komponen `CatatanBelumAktif` dan fungsi dummy `cariProdukContoh`.
+- Membuat Server Action `ubahProduk` di `app/admin/actions.js` yang memvalidasi sesi login admin, memvalidasi input data produk, dan melakukan update data ke tabel `produk` di Supabase.
+- Berhasil mengarahkan kembali ke `/admin` (`redirect("/admin")`) setelah perubahan disimpan.
+
+**Perbaikan:**
+Membuat komponen perantara `FormUbahProduk.jsx` untuk mengikat ID produk (`ubahProduk.bind(null, produk.id)`) dengan `useActionState` secara bersih dan modular.

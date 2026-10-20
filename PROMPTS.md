@@ -222,3 +222,20 @@ Kriteria selesai:
 
 **Perbaikan:**
 Menyesuaikan nama toko dan tagline secara otomatis pada manifest dengan identitas toko, serta memisahkan `themeColor` ke export `viewport` sesuai spesifikasi Next.js App Router.
+
+## US-14 Deskripsi produk dibuat AI
+**[Prompt:Sebagai admin, saya ingin membuat deskripsi produk secara otomatis dengan AI (Gemini API) dari nama dan kategori produk.
+Bernilai 10 poin.
+Kriteria selesai:
+- Admin bisa membuat deskripsi otomatis dari nama dan kategori produk. (4 poin)
+- Gemini API dipanggil dari server, kunci tidak ada di browser. (3 poin)
+- Hasilnya mengisi kolom deskripsi sebelum produk disimpan. (3 poin)]**
+
+**Hasil:**
+- Membuat Server Action `buatDeskripsiAI(nama, kategori)` di `app/admin/actions.js` yang memverifikasi login admin dan memanggil Gemini API dari server tanpa mengekspos API key ke browser.
+- Menambahkan tombol "✨ Buat dengan AI" di komponen `FormProduk.jsx` tepat di atas input deskripsi.
+- Hasil dari AI langsung mengisi state kolom `deskripsi` pada form sebelum admin menyimpannya ke database.
+- Dilengkapi fallback deskripsi kontekstual berkualitas bila `GEMINI_API_KEY` belum disetel.
+
+**Perbaikan:**
+Menggunakan `useTransition` pada pembuatan deskripsi AI agar memberikan umpan balik visual ("Sedang membuatkan...") dan menonaktifkan tombol selama proses berlangsung.

@@ -175,4 +175,74 @@ export async function hapusProduk(id) {
   redirect("/admin");
 }
 
+export async function buatDeskripsiAI(nama, kategori) {
+  const supabase = await buatKlienAdmin();
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
+
+  if (userError || !user) {
+    return { error: "Aksi ditolak: Anda harus login sebagai admin." };
+  }
+
+  if (!nama || !nama.trim()) {
+    return { error: "Nama produk harus diisi terlebih dahulu untuk membuat deskripsi AI." };
+  }
+
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) {
+    // Fallback deskripsi berkualitas jika API key belum diisi di environment
+    const deskripsiFallback = `${nama.trim()}${
+      kategori ? ` dalam kategori ${kategori.trim()}` : ""
+    } berkualitas tinggi, dibuat dengan bahan pilihan dan standar terbaik untuk kepuasan pelanggan.`;
+    return { deskripsi: deskripsiFallback };
+  }
+
+  try {
+    const prompt = `Buatkan deskripsi produk yang menarik, ramah, dan menjual untuk toko UMKM Indonesia.
+Nama produk: ${nama.trim()}
+Kategori: ${kategori?.trim() || "Umum"}
+
+Ketentuan:
+- Bahasa Indonesia yang santun dan menarik pembeli
+- Panjang 2-3 kalimat ringkas (sekitar 30-50 kata)
+- Jangan gunakan format markdown judul (tanpa # atau *)
+- Hanya keluarkan teks deskripsi saja`;
+
+    const res = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt }] }],
+        }),
+      }
+    );
+
+    if (!res.ok) {
+      const errData = await res.json().catch(() => ({}));
+      return {
+        error: `Gagal memanggil Gemini API (${res.status}): ${
+          errData?.error?.message || "Terjadi kesalahan"
+        }`,
+      };
+    }
+
+    const data = await res.json();
+    const deskripsiHasil =
+      data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim() || "";
+
+    if (!deskripsiHasil) {
+      return { error: "Gemini tidak menghasilkan deskripsi. Silakan coba lagi." };
+    }
+
+    return { deskripsi: deskripsiHasil };
+  } catch (err) {
+    return { error: `Gagal menghubungi layanan AI: ${err.message}` };
+  }
+}
+
+
 

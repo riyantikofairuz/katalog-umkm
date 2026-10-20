@@ -69,12 +69,50 @@ export default function FormProduk({
         onChange={(e) => setKategori(e.target.value)}
       />
 
-      <Input
-        label="Link foto"
-        name="foto_url"
-        placeholder="https://... atau /produk/nama-file.svg"
-        defaultValue={produk.foto_url}
-      />
+      <div className="flex flex-col gap-2 rounded-xl border border-garis/60 bg-permukaan/50 p-4">
+        <label className="text-sm font-semibold text-teks">
+          Foto Produk (Upload Komputer atau Link)
+        </label>
+
+        {/* Input File Foto (US-29) */}
+        <div className="flex flex-col gap-1.5">
+          <span className="text-xs text-teks-lembut">
+            Unggah foto dari perangkat (Maks 2 MB: JPG, PNG, WebP, SVG):
+          </span>
+          <input
+            type="file"
+            name="file_foto"
+            accept="image/*"
+            className="w-full rounded-lg border border-garis bg-latar px-3 py-2 text-sm text-teks file:mr-3 file:rounded-md file:border-0 file:bg-utama/15 file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-utama hover:file:bg-utama/25 cursor-pointer focus:outline-none"
+          />
+        </div>
+
+        <div className="relative flex py-1 items-center">
+          <div className="flex-grow border-t border-garis/60"></div>
+          <span className="flex-shrink mx-2 text-[11px] text-teks-lembut uppercase tracking-wider">
+            atau gunakan tautan
+          </span>
+          <div className="flex-grow border-t border-garis/60"></div>
+        </div>
+
+        <Input
+          label="Link foto manual"
+          name="foto_url"
+          placeholder="https://... atau /produk/nama-file.svg"
+          defaultValue={produk.foto_url}
+        />
+
+        {produk.foto_url && (
+          <div className="mt-2 flex items-center gap-3">
+            <span className="text-xs text-teks-lembut">Foto saat ini:</span>
+            <img
+              src={produk.foto_url}
+              alt={produk.nama || "Preview foto"}
+              className="h-12 w-12 rounded-lg object-cover border border-garis shadow-xs"
+            />
+          </div>
+        )}
+      </div>
 
       <div className="flex flex-col gap-1.5">
         <div className="flex items-center justify-between">

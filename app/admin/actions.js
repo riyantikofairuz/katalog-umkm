@@ -1,7 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { buatKlienAdmin } from "@/lib/supabase";
+import { buatKlienAdmin, buatKlienServer } from "@/lib/supabase";
 
 export async function loginAdmin(prevState, formData) {
   const email = formData.get("email");
@@ -70,6 +70,53 @@ export async function gantiPassword(prevState, formData) {
   return { success: "Password berhasil diperbarui." };
 }
 
+// US-29: Fungsi upload gambar ke Supabase Storage
+async function unggahFotoStorage(file) {
+  if (!file || typeof file !== "object" || file.size === 0) {
+    return { url: null };
+  }
+
+  // Validasi tipe file gambar
+  const validMimeTypes = ["image/jpeg", "image/png", "image/webp", "image/gif", "image/svg+xml"];
+  if (!validMimeTypes.includes(file.type)) {
+    return { error: "File harus berupa gambar (JPG, PNG, WebP, GIF, atau SVG)." };
+  }
+
+  // Validasi ukuran maksimal (maks 2MB)
+  const maxUkuran = 2 * 1024 * 1024; // 2MB
+  if (file.size > maxUkuran) {
+    return { error: "Ukuran foto maksimal adalah 2 MB." };
+  }
+
+  try {
+    // Gunakan buatKlienServer dengan SUPABASE_SECRET_KEY untuk mengunggah ke storage
+    const supabase = buatKlienServer();
+    const ekstensi = file.name ? file.name.split(".").pop() : "jpg";
+    const namaUnik = `produk_${Date.now()}_${Math.random().toString(36).substring(2, 9)}.${ekstensi}`;
+    const buffer = Buffer.from(await file.arrayBuffer());
+
+    // Coba upload ke bucket 'produk'
+    const { error: uploadError } = await supabase.storage
+      .from("produk")
+      .upload(namaUnik, buffer, {
+        contentType: file.type,
+        upsert: false,
+      });
+
+    if (uploadError) {
+      return { error: `Gagal mengunggah foto ke storage: ${uploadError.message}` };
+    }
+
+    const { data: publicUrlData } = supabase.storage
+      .from("produk")
+      .getPublicUrl(namaUnik);
+
+    return { url: publicUrlData?.publicUrl || null };
+  } catch (err) {
+    return { error: `Terjadi kesalahan saat memproses file foto: ${err.message}` };
+  }
+}
+
 export async function tambahProduk(prevState, formData) {
   const supabase = await buatKlienAdmin();
   const {
@@ -84,8 +131,9 @@ export async function tambahProduk(prevState, formData) {
   const nama = formData.get("nama")?.toString().trim();
   const hargaRaw = formData.get("harga")?.toString().trim();
   const kategori = formData.get("kategori")?.toString().trim() || null;
-  const foto_url = formData.get("foto_url")?.toString().trim() || null;
+  let foto_url = formData.get("foto_url")?.toString().trim() || null;
   const deskripsi = formData.get("deskripsi")?.toString().trim() || null;
+  const fileFoto = formData.get("file_foto");
 
   if (!nama) {
     return { error: "Nama produk wajib diisi." };
@@ -94,6 +142,17 @@ export async function tambahProduk(prevState, formData) {
   const harga = parseInt(hargaRaw, 10);
   if (isNaN(harga) || harga < 0) {
     return { error: "Harga produk harus berupa angka positif." };
+  }
+
+  // Jika admin mengunggah file foto baru
+  if (fileFoto && typeof fileFoto === "object" && fileFoto.size > 0) {
+    const uploadRes = await unggahFotoStorage(fileFoto);
+    if (uploadRes.error) {
+      return { error: uploadRes.error };
+    }
+    if (uploadRes.url) {
+      foto_url = uploadRes.url;
+    }
   }
 
   const { error } = await supabase.from("produk").insert({
@@ -125,8 +184,9 @@ export async function ubahProduk(id, prevState, formData) {
   const nama = formData.get("nama")?.toString().trim();
   const hargaRaw = formData.get("harga")?.toString().trim();
   const kategori = formData.get("kategori")?.toString().trim() || null;
-  const foto_url = formData.get("foto_url")?.toString().trim() || null;
+  let foto_url = formData.get("foto_url")?.toString().trim() || null;
   const deskripsi = formData.get("deskripsi")?.toString().trim() || null;
+  const fileFoto = formData.get("file_foto");
 
   if (!nama) {
     return { error: "Nama produk wajib diisi." };
@@ -135,6 +195,17 @@ export async function ubahProduk(id, prevState, formData) {
   const harga = parseInt(hargaRaw, 10);
   if (isNaN(harga) || harga < 0) {
     return { error: "Harga produk harus berupa angka positif." };
+  }
+
+  // Jika admin mengunggah file foto baru
+  if (fileFoto && typeof fileFoto === "object" && fileFoto.size > 0) {
+    const uploadRes = await unggahFotoStorage(fileFoto);
+    if (uploadRes.error) {
+      return { error: uploadRes.error };
+    }
+    if (uploadRes.url) {
+      foto_url = uploadRes.url;
+    }
   }
 
   const { error } = await supabase

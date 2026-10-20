@@ -522,3 +522,23 @@ Kriteria selesai:
 
 **Perbaikan:**
 Menyematkan animasi pulse (`animate-pulse`) dengan warna kontras yang serasi pada token CSS tema terang maupun mode gelap agar tampilan transisi muat data terasa nyaman di mata.
+
+## US-29 Upload foto ke Supabase Storage
+
+**Prompt:**
+Sebagai admin, saya ingin mengunggah foto produk dari komputer, supaya tidak perlu mengisi link foto manual.
+Bernilai 15 poin.
+Kriteria selesai:
+- Form produk punya input file foto. (4 poin)
+- File diunggah ke Supabase Storage dari server, kunci tidak ada di browser. (4 poin)
+- URL foto tersimpan di produk dan foto tampil di katalog. (4 poin)
+- Tipe file (gambar) dan ukuran maksimal divalidasi dengan pesan error yang jelas. (3 poin)
+
+**Hasil:**
+- Menambahkan input berkas foto (`<input type="file" name="file_foto" accept="image/*" />`) pada `components/FormProduk.jsx` dan menampilkan pratinjau foto produk.
+- Menambahkan fungsi `unggahFotoStorage` di Server Action `app/admin/actions.js` yang memproses file upload langsung di server menggunakan `buatKlienServer()` (memakai `SUPABASE_SECRET_KEY`) sehingga kunci rahasia tetap terlindungi di server.
+- Memvalidasi tipe MIME berkas foto (hanya gambar JPG, PNG, WebP, GIF, SVG yang diizinkan) dan memvalidasi ukuran maksimum berkas maksimal 2 MB dengan pesan kesalahan yang jelas.
+- Mengunggah berkas ke bucket storage `produk`, mengambil URL publiknya (`getPublicUrl`), dan menyimpannya ke kolom `foto_url` tabel `produk` sehingga foto langsung tampil di katalog.
+
+**Perbaikan:**
+Memberikan fleksibilitas bagi admin: admin dapat mengunggah file foto baru dari komputer ATAU tetap dapat memasukkan tautan link foto secara manual jika diperlukan.

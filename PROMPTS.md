@@ -584,3 +584,23 @@ Kriteria selesai:
 
 **Perbaikan:**
 Menyediakan helper fleksibel di `lib/kategori.js` yang secara otomatis mengenali data kategori dari tabel master maupun kategori unik produk di database.
+
+## US-32 Aktif atau nonaktifkan produk
+
+**Prompt:**
+Sebagai admin, saya ingin menyembunyikan produk tanpa menghapusnya, supaya bisa ditampilkan lagi nanti.
+Bernilai 10 poin.
+Kriteria selesai:
+- Ada tombol aktif atau nonaktif untuk produk di halaman admin. (4 poin)
+- Produk nonaktif tidak muncul di katalog publik, dan halaman detailnya menampilkan "tidak ditemukan". (3 poin)
+- Aksinya memeriksa login di server. (3 poin)
+
+**Hasil:**
+- Menambahkan Server Action `beralihStatusProduk(id, statusSaatIni)` di `app/admin/actions.js` yang memverifikasi sesi login admin di sisi server sebelum mengubah status aktif/nonaktif produk.
+- Membuat komponen client `components/TombolStatusProduk.jsx` dan menyematkannya pada kolom "Status" di tabel produk admin (`components/TabelProduk.jsx`).
+- Mengatur status penandaan produk nonaktif (menggunakan penanda `[NONAKTIF] ` pada nama produk tanpa mengubah struktur skema kolom).
+- Menyaring query katalog beranda (`app/page.jsx`) agar secara otomatis menyembunyikan produk yang berstatus nonaktif.
+- Memperbarui halaman detail produk (`app/produk/[id]/page.jsx`) agar memicu `notFound()` jika pengunjung mencoba mengakses tautan produk yang sedang nonaktif.
+
+**Perbaikan:**
+Menampilkan status badge "Nonaktif (Disembunyikan)" serta efek visual baris redup di panel admin agar admin dapat dengan cepat membedakan produk mana saja yang sedang disembunyikan dari publik.

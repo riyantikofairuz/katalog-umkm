@@ -246,6 +246,53 @@ export async function hapusProduk(id) {
   redirect("/admin");
 }
 
+// US-32: Server Action untuk Mengaktifkan / Menonaktifkan Produk
+export async function beralihStatusProduk(id, statusSaatIni) {
+  const supabase = await buatKlienAdmin();
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
+
+  if (userError || !user) {
+    return { error: "Aksi ditolak: Anda harus login sebagai admin." };
+  }
+
+  // Ambil data produk saat ini
+  const { data: produk, error: fetchError } = await supabase
+    .from("produk")
+    .select("nama, deskripsi")
+    .eq("id", id)
+    .single();
+
+  if (fetchError || !produk) {
+    return { error: "Produk tidak ditemukan." };
+  }
+
+  let namaBaru = produk.nama;
+  const isCurrentlyNonaktif = produk.nama.startsWith("[NONAKTIF] ");
+
+  if (isCurrentlyNonaktif) {
+    // Aktifkan kembali: buang prefix '[NONAKTIF] '
+    namaBaru = produk.nama.replace(/^\[NONAKTIF\]\s*/, "");
+  } else {
+    // Nonaktifkan produk: tambahkan prefix '[NONAKTIF] '
+    namaBaru = `[NONAKTIF] ${produk.nama}`;
+  }
+
+  const { error: updateError } = await supabase
+    .from("produk")
+    .update({ nama: namaBaru })
+    .eq("id", id);
+
+  if (updateError) {
+    return { error: `Gagal memperbarui status produk: ${updateError.message}` };
+  }
+
+  redirect("/admin");
+}
+
+
 export async function buatDeskripsiAI(nama, kategori) {
   const supabase = await buatKlienAdmin();
   const {

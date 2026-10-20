@@ -65,7 +65,13 @@ export default async function HalamanDetailProduk({ params }) {
     .eq("id", id)
     .maybeSingle();
 
-  if (error || !produk) {
+  // US-32: Jika produk tidak ditemukan, produk placeholder, atau produk nonaktif, tampilkan not-found
+  if (
+    error ||
+    !produk ||
+    produk.deskripsi === "__KATEGORI_SYS__" ||
+    produk.nama?.startsWith("[NONAKTIF] ")
+  ) {
     notFound();
   }
 

@@ -26,10 +26,12 @@ export default async function HalamanKatalog({ searchParams }) {
     semuaKategori = await ambilDaftarKategori();
 
     // Query produk dengan hitungan total (count) dan filter
+    // US-32: Produk nonaktif ([NONAKTIF] ...) disembunyikan dari katalog publik
     let query = supabase
       .from("produk")
       .select("*", { count: "exact" })
-      .neq("deskripsi", "__KATEGORI_SYS__");
+      .neq("deskripsi", "__KATEGORI_SYS__")
+      .not("nama", "like", "[NONAKTIF]%");
 
     if (kategori && kategori.trim()) {
       query = query.eq("kategori", kategori.trim());

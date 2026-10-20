@@ -95,4 +95,5 @@ Urutan yang disarankan: US-01, US-02, US-03, US-04, US-05, US-06, lalu fitur bon
   - **US-21:** Keranjang belanja & pesan semua via WhatsApp
   - **US-22:** Halaman Tentang toko dan kontak resmi
   - **US-23:** Bagikan atau salin link produk
+  - **US-24:** Favorit tersimpan di browser (/favorit)
 

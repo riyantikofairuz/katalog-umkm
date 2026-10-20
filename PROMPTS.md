@@ -388,3 +388,20 @@ Kriteria selesai:
 
 **Perbaikan:**
 Menangani kasus `AbortError` dengan tenang saat pengguna menutup dialog share bawaan browser tanpa menyalin.
+
+## US-24 Favorit tersimpan di browser
+**[Prompt:Sebagai pengunjung, saya ingin menandai produk favorit, supaya mudah menemukannya lagi.
+Bernilai 10 poin.
+Kriteria selesai:
+- Ada tombol favorit di kartu atau halaman detail. (4 poin)
+- Favorit tersimpan di browser dan bertahan setelah halaman dimuat ulang. (3 poin)
+- Ada tampilan yang hanya berisi produk favorit. (3 poin)]**
+
+**Hasil:**
+- Membuat `FavoritContext.jsx` yang menyimpan daftar ID produk favorit ke `localStorage` browser sehingga tetap tersimpan setelah reload.
+- Membuat komponen `TombolFavorit.jsx` dengan ikon hati (❤️ / 🤍) yang terpasang di setiap `KartuProduk.jsx` dan di halaman detail produk `app/produk/[id]/page.jsx`.
+- Menambahkan tautan dan tombol counter favorit di `Header.jsx`.
+- Membuat halaman baru `app/favorit/page.jsx` dan komponen `DaftarProdukFavorit.jsx` yang menyaring dan menampilkan produk-produk yang ditandai favorit oleh pengunjung.
+
+**Perbaikan:**
+Menggunakan pengecekan `mounted` di client untuk menghindari ketidakcocokan hidrasi (hydration mismatch) saat membaca `localStorage`.

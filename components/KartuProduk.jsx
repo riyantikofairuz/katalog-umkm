@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { formatRupiah } from "@/lib/format";
+import TombolFavorit from "@/components/TombolFavorit";
 
 export default function KartuProduk({ produk }) {
   // US-19: Cek status stok
@@ -24,20 +25,24 @@ export default function KartuProduk({ produk }) {
     (produk.is_baru ? "Baru" : null);
 
   return (
-    <Link
-      href={`/produk/${produk.id}`}
-      className="group relative flex flex-col overflow-hidden rounded-2xl border border-garis bg-latar"
-    >
+    <div className="group relative flex flex-col overflow-hidden rounded-2xl border border-garis bg-latar transition hover:shadow-md">
       <div className="relative aspect-square w-full overflow-hidden bg-permukaan">
-        <img
-          src={produk.foto_url}
-          alt={produk.nama}
-          className={`h-full w-full object-cover transition ${
-            isHabis ? "opacity-60 grayscale" : ""
-          }`}
-        />
+        <Link href={`/produk/${produk.id}`}>
+          <img
+            src={produk.foto_url}
+            alt={produk.nama}
+            className={`h-full w-full object-cover transition ${
+              isHabis ? "opacity-60 grayscale" : "group-hover:scale-105"
+            }`}
+          />
+        </Link>
 
-        {/* Badge status / promo */}
+        {/* US-24: Tombol Favorit di sudut kanan atas */}
+        <div className="absolute right-2.5 top-2.5 z-10">
+          <TombolFavorit id={produk.id} nama={produk.nama} />
+        </div>
+
+        {/* Badge status / promo di sudut kiri atas */}
         <div className="absolute left-2.5 top-2.5 flex flex-col gap-1">
           {isHabis ? (
             <span className="rounded-md bg-bahaya px-2 py-0.5 text-xs font-bold text-white shadow-sm">
@@ -66,7 +71,7 @@ export default function KartuProduk({ produk }) {
         </div>
       </div>
 
-      <div className="flex flex-1 flex-col gap-2 p-3">
+      <Link href={`/produk/${produk.id}`} className="flex flex-1 flex-col gap-2 p-3">
         <div className="flex items-center justify-between">
           <p className="text-xs text-teks-lembut">{produk.kategori}</p>
           {isHabis && (
@@ -86,7 +91,7 @@ export default function KartuProduk({ produk }) {
             </span>
           )}
         </div>
-      </div>
-    </Link>
+      </Link>
+    </div>
   );
 }

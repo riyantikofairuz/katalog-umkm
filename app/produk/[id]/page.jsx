@@ -4,6 +4,7 @@ import PilihanPesanWhatsApp from "@/components/PilihanPesanWhatsApp";
 import KartuProduk from "@/components/KartuProduk";
 import GaleriFotoProduk from "@/components/GaleriFotoProduk";
 import TombolBagikanProduk from "@/components/TombolBagikanProduk";
+import TombolFavorit from "@/components/TombolFavorit";
 import { formatRupiah } from "@/lib/format";
 import { buatKlienServer } from "@/lib/supabase";
 
@@ -66,8 +67,12 @@ export default async function HalamanDetailProduk({ params }) {
             <Link href="/" className="text-sm text-teks-lembut underline underline-offset-4 hover:text-utama">
               Kembali ke katalog
             </Link>
-            {/* US-23: Tombol Bagikan atau Salin Link */}
-            <TombolBagikanProduk nama={produk.nama} kategori={produk.kategori} />
+            <div className="flex items-center gap-2">
+              {/* US-24: Tombol Favorit */}
+              <TombolFavorit id={produk.id} nama={produk.nama} className="border border-garis" />
+              {/* US-23: Tombol Bagikan atau Salin Link */}
+              <TombolBagikanProduk nama={produk.nama} kategori={produk.kategori} />
+            </div>
           </div>
 
           <div className="flex flex-wrap items-center gap-2">

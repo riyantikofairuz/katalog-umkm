@@ -3,6 +3,7 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ModalKeranjang from "@/components/ModalKeranjang";
 import { KeranjangProvider } from "@/lib/KeranjangContext";
+import { FavoritProvider } from "@/lib/FavoritContext";
 import { toko } from "@/lib/toko";
 
 export const metadata = {
@@ -31,12 +32,14 @@ export default function RootLayout({ children }) {
         />
       </head>
       <body className="flex min-h-screen flex-col font-sans antialiased">
-        <KeranjangProvider>
-          <Header />
-          <main className="mx-auto w-full max-w-5xl flex-1 px-4">{children}</main>
-          <Footer />
-          <ModalKeranjang />
-        </KeranjangProvider>
+        <FavoritProvider>
+          <KeranjangProvider>
+            <Header />
+            <main className="mx-auto w-full max-w-5xl flex-1 px-4">{children}</main>
+            <Footer />
+            <ModalKeranjang />
+          </KeranjangProvider>
+        </FavoritProvider>
       </body>
     </html>
   );

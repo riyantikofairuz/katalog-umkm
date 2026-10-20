@@ -644,3 +644,23 @@ Kriteria selesai:
 
 **Perbaikan:**
 Menyinkronkan state lokal form dengan pembaruan `values` dari respons server action menggunakan mekanisme `prevValues` agar pergantian state berjalan mulus tanpa mereset input yang sudah benar.
+
+## US-35 Ekspor produk ke CSV
+
+**Prompt:**
+Sebagai admin, saya ingin mengunduh daftar produk, supaya bisa dibuka di spreadsheet.
+Bernilai 10 poin.
+Kriteria selesai:
+- Ada tombol "Ekspor CSV" yang mengunduh semua produk. (4 poin)
+- CSV dibuat di server, kolom dan header jelas, dan karakter khusus (koma, kutip) aman. (3 poin)
+- Endpoint memeriksa login: tanpa login ditolak. (3 poin)
+
+**Hasil:**
+- Membuat Route Handler `/admin/produk/ekspor/route.js` yang menghasilkan file CSV secara dinamis langsung dari database Supabase di sisi server.
+- Memproteksi endpoint dengan memeriksa sesi otentikasi admin (`buatKlienAdmin().auth.getUser()`); request tanpa sesi login valid otomatis ditolak dengan status 401 Unauthorized.
+- Mengatur kolom dan header CSV yang jelas: ID, Nama Produk, Harga (Rp), Kategori, Deskripsi, URL Foto, dan Tanggal Dibuat.
+- Menerapkan escaping karakter khusus (kutip ganda `""` dan pemisah koma) sesuai standar RFC 4180 serta menyematkan UTF-8 BOM (`\uFEFF`) agar karakter khusus terbaca sempurna di Microsoft Excel maupun Google Sheets.
+- Menambahkan tombol "📥 Ekspor CSV" di header halaman kelola produk admin (`app/admin/page.jsx`).
+
+**Perbaikan:**
+Menambahkan header response `Content-Disposition: attachment; filename="katalog-produk-YYYY-MM-DD.csv"` agar peramban otomatis mengunduh file dengan format tanggal terkini.

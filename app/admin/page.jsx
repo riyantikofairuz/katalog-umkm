@@ -104,11 +104,21 @@ export default async function HalamanAdmin({ searchParams }) {
         </div>
       </div>
 
-      {/* Header Kelola Produk & Tambah Produk */}
+      {/* Header Kelola Produk, Ekspor CSV, & Tambah Produk */}
       <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
         <h1 className="text-2xl font-extrabold">Kelola Produk</h1>
-        {/* US-08: tambah produk */}
-        <Tombol href="/admin/produk/baru">Tambah produk</Tombol>
+        <div className="flex items-center gap-2.5">
+          {/* US-35: Tombol Ekspor CSV */}
+          <a
+            href="/admin/produk/ekspor"
+            download
+            className="inline-flex items-center gap-1.5 rounded-lg border border-garis/80 bg-permukaan px-3.5 py-2 text-xs font-semibold text-teks hover:border-utama hover:text-utama shadow-2xs transition"
+          >
+            <span>📥</span> Ekspor CSV
+          </a>
+          {/* US-08: Tambah produk */}
+          <Tombol href="/admin/produk/baru">Tambah produk</Tombol>
+        </div>
       </div>
 
       {/* US-33: Bar Pencarian dan Info Hasil */}

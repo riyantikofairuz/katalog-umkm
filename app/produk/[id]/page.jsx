@@ -5,6 +5,7 @@ import KartuProduk from "@/components/KartuProduk";
 import GaleriFotoProduk from "@/components/GaleriFotoProduk";
 import TombolBagikanProduk from "@/components/TombolBagikanProduk";
 import TombolFavorit from "@/components/TombolFavorit";
+import CatatTerakhirDilihat from "@/components/CatatTerakhirDilihat";
 import { formatRupiah } from "@/lib/format";
 import { buatKlienServer } from "@/lib/supabase";
 import { toko } from "@/lib/toko";
@@ -104,6 +105,9 @@ export default async function HalamanDetailProduk({ params }) {
 
   return (
     <div className="flex flex-col gap-12 py-8 md:py-12">
+      {/* US-36: Rekam riwayat produk yang dibuka ke browser */}
+      <CatatTerakhirDilihat produk={produk} />
+
       <article className="grid gap-8 md:grid-cols-2">
         {/* US-18: Galeri Foto Produk */}
         <GaleriFotoProduk

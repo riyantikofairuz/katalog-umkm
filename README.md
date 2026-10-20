@@ -107,4 +107,5 @@ Urutan yang disarankan: US-01, US-02, US-03, US-04, US-05, US-06, lalu fitur bon
   - **US-33:** Cari dan paginasi di list admin (tersinkron di URL & query database)
   - **US-34:** Validasi form admin di server (pesan per field & nilai input terjaga)
   - **US-35:** Ekspor produk ke file CSV (dibuat di server dengan proteksi auth)
+  - **US-36:** Terakhir dilihat (riwayat produk tersimpan di browser & tampil di beranda)
 

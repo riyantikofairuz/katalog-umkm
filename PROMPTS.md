@@ -664,3 +664,22 @@ Kriteria selesai:
 
 **Perbaikan:**
 Menambahkan header response `Content-Disposition: attachment; filename="katalog-produk-YYYY-MM-DD.csv"` agar peramban otomatis mengunduh file dengan format tanggal terkini.
+
+## US-36 Terakhir dilihat
+
+**Prompt:**
+Sebagai pengunjung, saya ingin melihat produk yang baru saya buka, supaya mudah kembali ke sana.
+Bernilai 5 poin.
+Kriteria selesai:
+- Produk yang dibuka tersimpan di browser dengan batas jumlah tertentu. (3 poin)
+- Bagian "Terakhir dilihat" tampil di beranda dan tidak muncul bila masih kosong. (2 poin)
+
+**Hasil:**
+- Membuat komponen client `CatatTerakhirDilihat.jsx` yang dipasang pada halaman detail produk (`app/produk/[id]/page.jsx`) untuk secara otomatis merekam histori produk yang dibuka ke `localStorage` browser (`katalog_umkm_terakhir_dilihat`).
+- Menerapkan batasan maksimal 6 produk terbaru (FIFO: yang paling baru dibuka berada di urutan terdepan) dan menghilangkan entri duplikat.
+- Membuat komponen `TerakhirDilihat.jsx` yang disematkan di bagian bawah katalog beranda (`app/page.jsx`).
+- Bagian "Terakhir dilihat" hanya dirender jika terdapat riwayat produk yang tersimpan di browser; jika riwayat masih kosong, bagian ini sepenuhnya tersembunyi.
+- Menyediakan tombol "Hapus riwayat" bagi pengunjung yang ingin membersihkan histori produk yang telah dilihat.
+
+**Perbaikan:**
+Menggunakan pengecekan `isLoaded` di sisi client untuk mencegah perbedaan hidrasi (hydration mismatch) antara server-side rendering Next.js dan pembacaan `localStorage` peramban.
